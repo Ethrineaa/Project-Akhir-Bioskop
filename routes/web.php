@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\StudioController;
 use App\Http\Controllers\Admin\KursiController;
 use App\Http\Controllers\Admin\JadwalController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\User\UserDashboardController;
 
 Route::get('/', function () {
     return view('admin.layouts.app');
