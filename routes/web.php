@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\FilmController;
 use App\Http\Controllers\Admin\StudioController;
 use App\Http\Controllers\Admin\KursiController;
 use App\Http\Controllers\Admin\JadwalController;
+use App\Http\Controllers\LandingController;
+use App\Http\Controllers\UserDashboardController;
 
 Route::get('/', function () {
     return view('admin.layouts.app');
