@@ -27,10 +27,13 @@
                     <!-- =================== USER DROPDOWN =================== -->
                     <div class="relative" x-data="{ open: false }">
 
-                        <!-- ICON -->
+                        <!-- ICON USER YANG BAGUS -->
                         <button @click="open = !open" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm4 8c0 1-1 1-1 1H5s-1 0-1-1 1-4 4-4 4 3 4 4z" />
+                            <!-- Heroicon User Circle -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M5.121 17.804A9 9 0 1 1 18 18M15 14a3 3 0 1 0-6 0" />
                             </svg>
                         </button>
 
@@ -53,11 +56,15 @@
                         </div>
                     </div>
                 @else
-                    <!-- =================== IKON USER (LOGIN MODAL) =================== -->
+                    <!-- =================== USER ICON (OPEN LOGIN MODAL) =================== -->
                     <button @click="openLogin = true" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm4 8c0 1-1 1-1 1H5s-1 0-1-1 1-4 4-4 4 3 4 4z" />
+
+                        <!-- Heroicon User Solid -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 2a4 4 0 110 8 4 4 0 010-8zm-7 14a7 7 0 1114 0H3z"
+                                clip-rule="evenodd" />
                         </svg>
+
                     </button>
                 @endauth
 
@@ -102,16 +109,10 @@
         </div>
     </nav>
 
-
-
-
     <!-- ====================== CONTENT ====================== -->
     <main class="min-h-screen">
         @yield('content')
     </main>
-
-
-
 
     <!-- ====================== FOOTER ====================== -->
     <footer class="bg-gray-800 text-center py-5 mt-10">
