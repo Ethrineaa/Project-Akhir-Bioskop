@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Film;
+use Illuminate\Http\Request;
 
 class FilmController extends Controller
 {
     public function show($id)
-{
-    $film = Film::with('jadwals', 'genre')->findOrFail($id);
+    {
+        // Ambil film berdasarkan ID
+        $film = Film::with('jadwals.studio')->findOrFail($id);
 
-    return view('user.film.show', compact('film'));
-}
-
+        return view('user.films.show', compact('film'));
+    }
 }

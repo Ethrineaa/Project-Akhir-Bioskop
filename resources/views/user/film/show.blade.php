@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.landing')
 
 @section('content')
 <div class="max-w-5xl mx-auto mt-10 text-white">
