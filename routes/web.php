@@ -1,50 +1,75 @@
 <?php
-use App\Http\Controllers\ProfileController;
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LandingController;
+use App\Http\Controllers\ProfileController;
+
+// ADMIN Controllers
 use App\Http\Controllers\Admin\GenreController;
-use App\Http\Controllers\Admin\FilmController;
+use App\Http\Controllers\Admin\FilmController as AdminFilmController;
 use App\Http\Controllers\Admin\StudioController;
 use App\Http\Controllers\Admin\KursiController;
 use App\Http\Controllers\Admin\JadwalController;
-use App\Http\Controllers\LandingController;
+
+// USER Controllers
+use App\Http\Controllers\User\FilmController as UserFilmController;
 use App\Http\Controllers\User\UserDashboardController;
 
-Route::get('/', function () {
-    return view('admin.layouts.app');
+/*
+|--------------------------------------------------------------------------
+| PUBLIC ROUTES
+|--------------------------------------------------------------------------
+*/
+
+// Landing page
+Route::get('/', [LandingController::class, 'index'])->name('landing');
+
+// Detail + jadwal film (dapat dilihat tanpa login)
+Route::get('/film/{film}', [UserFilmController::class, 'show'])->name('film.show');
+
+
+/*
+|--------------------------------------------------------------------------
+| USER ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/dashboard-user', [UserDashboardController::class, 'index'])
+        ->name('user.dashboard');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES
+|--------------------------------------------------------------------------
+*/
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth'])
+    ->middleware(['auth', 'role:admin'])
     ->group(function () {
+
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+
         Route::resource('genre', GenreController::class);
-        Route::resource('film', FilmController::class);
+        Route::resource('film', AdminFilmController::class);
         Route::resource('studio', StudioController::class);
         Route::resource('kursi', KursiController::class);
         Route::resource('jadwal', JadwalController::class);
     });
-// Halaman detail + jadwal film
-Route::get('/film/{film}', [App\Http\Controllers\User\FilmController::class, 'show'])
-    ->name('film.show');
 
-// public landing page
-Route::get('/', [LandingController::class, 'index'])->name('landing');
 
-// user dashboard (login required)
-Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/dashboard-user', [UserDashboardController::class, 'index'])->name('user.dashboard');
-});
-
+/*
+|--------------------------------------------------------------------------
+| PROFILE ROUTES
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
