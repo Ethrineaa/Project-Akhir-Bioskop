@@ -4,16 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Film;
 use App\Models\Genre;
+use Illuminate\Http\Request;
 
 class LandingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Ambil 4 film terbaru
-        $films = Film::latest()->take(4)->get();
-
-        // Ambil semua genre
         $genres = Genre::all();
+
+        // Jika user memilih genre
+        if ($request->genre) {
+            $films = Film::where('genre_id', $request->genre)->latest()->get();
+        }
+        // Jika All atau tidak memilih apapun
+        else {
+            $films = Film::latest()->get();
+        }
 
         return view('welcome', compact('films', 'genres'));
     }
