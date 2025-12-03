@@ -130,7 +130,7 @@
                 <button
                     class="px-4 py-1 rounded-full
                     {{ request('genre') == $genre->id ? 'bg-purple-600' : 'bg-gray-700' }}">
-                    {{ $genre->nama_genre }}
+                    {{ $genre->nama }}
                 </button>
             </a>
         @endforeach
