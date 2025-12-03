@@ -74,7 +74,8 @@
             x-transition:enter-start="opacity-0 scale-50 rotate-6"
             x-transition:enter-end="opacity-100 scale-100 rotate-0"
             x-transition:leave="transform transition duration-200 ease-in"
-            x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-75">
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-75">
 
             <h2 class="text-xl font-bold mb-4">Login to CineMagic</h2>
 
@@ -114,19 +115,21 @@
     <!-- FILTER GENRE -->
     <div class="max-w-5xl mx-auto mt-6 flex gap-3 overflow-x-auto pb-2">
 
+        <!-- All -->
         <a href="{{ route('landing') }}">
             <button
                 class="px-4 py-1 rounded-full
-               {{ request('genre') ? 'bg-gray-700' : 'bg-purple-600' }}">
+                {{ request('genre') ? 'bg-gray-700' : 'bg-purple-600' }}">
                 All
             </button>
         </a>
 
+        <!-- Genre Loop -->
         @foreach ($genres as $genre)
             <a href="?genre={{ $genre->id }}">
                 <button
                     class="px-4 py-1 rounded-full
-               {{ request('genre') == $genre->id ? 'bg-purple-600' : 'bg-gray-700' }}">
+                    {{ request('genre') == $genre->id ? 'bg-purple-600' : 'bg-gray-700' }}">
                     {{ $genre->nama_genre }}
                 </button>
             </a>
@@ -136,17 +139,27 @@
 
     <!-- NOW SHOWING -->
     <div class="max-w-5xl mx-auto mt-10">
-        <h2 class="text-xl font-semibold mb-4">Now Showing</h2>
+        <h2 class="text-xl font-semibold mb-4">
+            {{ request('genre') ? 'Filtered Movies' : 'Now Showing' }}
+        </h2>
 
         <div class="grid grid-cols-4 gap-6">
-            @foreach ($films as $film)
+            @forelse ($films as $film)
                 <div class="bg-gray-800 p-2 rounded-xl hover:scale-105 transition">
                     <img src="{{ asset('storage/' . $film->poster) }}" class="w-full h-56 object-cover rounded-lg">
 
                     <p class="mt-2 font-semibold">{{ $film->judul }}</p>
+
+                    <!-- tampilkan nama genre -->
+                    <p class="text-sm text-gray-400">
+                        {{ $film->genre->nama_genre ?? 'Unknown' }}
+                    </p>
+
                     <p class="text-sm text-gray-400">{{ $film->rating ?? 'PG-13' }}</p>
                 </div>
-            @endforeach
+            @empty
+                <p class="text-gray-400">Tidak ada film pada genre ini.</p>
+            @endforelse
         </div>
     </div>
 
