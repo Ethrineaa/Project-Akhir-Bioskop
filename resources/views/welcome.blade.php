@@ -146,16 +146,17 @@
         <div class="grid grid-cols-4 gap-6">
             @forelse ($films as $film)
                 <div class="bg-gray-800 p-2 rounded-xl hover:scale-105 transition">
-                    <img src="{{ asset('storage/' . $film->poster) }}" class="w-full h-56 object-cover rounded-lg">
+
+                    <!-- poster dari public/posters -->
+                    <img src="{{ asset('posters/' . $film->poster) }}" class="w-full h-56 object-cover rounded-lg">
 
                     <p class="mt-2 font-semibold">{{ $film->judul }}</p>
 
                     <!-- tampilkan nama genre -->
                     <p class="text-sm text-gray-400">
-                        {{ $film->genre->nama_genre ?? 'Unknown' }}
+                        {{ $film->genre->nama ?? 'Unknown' }}
                     </p>
 
-                    <p class="text-sm text-gray-400">{{ $film->rating ?? 'PG-13' }}</p>
                 </div>
             @empty
                 <p class="text-gray-400">Tidak ada film pada genre ini.</p>
