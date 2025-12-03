@@ -1,3 +1,4 @@
+@extends('layouts.landing')
 <!DOCTYPE html>
 <html lang="en" x-data="{ openLogin: false }">
 
