@@ -12,8 +12,32 @@
         <div class="flex-1">
             <h1 class="text-3xl font-bold">{{ $film->judul }}</h1>
 
-            <div class="mt-3 space-y-1 text-gray-200">
-                <p><span class="font-semibold">Sinopsis:</span> {{ $film->sinopsis }}</p>
+            <!-- SINOPSIS DENGAN READ MORE -->
+            <div class="mt-3 text-gray-200 leading-relaxed" x-data="{ expand: false }">
+
+                <p class="font-semibold">Sinopsis:</p>
+
+                <!-- Teks penuh -->
+                <p x-show="expand" x-collapse>
+                    {{ $film->sinopsis }}
+                </p>
+
+                <!-- Teks pendek (dipotong 180 karakter) -->
+                <p x-show="!expand" x-collapse>
+                    {{ Str::limit($film->sinopsis, 180) }}
+                </p>
+
+                <!-- Tombol -->
+                <button
+                    @click="expand = !expand"
+                    class="mt-2 text-blue-400 hover:underline">
+                    <span x-show="!expand">Read more</span>
+                    <span x-show="expand">Read less</span>
+                </button>
+            </div>
+
+            <!-- Detail lainnya -->
+            <div class="mt-4 space-y-1 text-gray-200">
                 <p><span class="font-semibold">Durasi:</span> {{ $film->durasi }} menit</p>
                 <p><span class="font-semibold">Harga Tiket:</span> Rp {{ number_format($film->harga, 0, ',', '.') }}</p>
                 <p>
@@ -28,7 +52,7 @@
     <h2 class="text-2xl font-semibold mt-10">Jadwal Tayang per Hari</h2>
 
     @php
-        // Contoh logika 7 hari ke depan
+        // Logika generate 7 hari ke depan
         $days = [];
         for ($i = 0; $i < 7; $i++) {
             $days[] = now()->addDays($i)->format('Y-m-d');
@@ -37,6 +61,7 @@
 
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mt-4">
         @foreach ($days as $day)
+
             <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg shadow">
                 <h3 class="font-bold text-white">
                     {{ \Carbon\Carbon::parse($day)->translatedFormat('l, d M') }}
@@ -73,6 +98,7 @@
                     @endforeach
                 @endif
             </div>
+
         @endforeach
     </div>
 
