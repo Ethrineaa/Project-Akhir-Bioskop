@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended('/admin/genre');
+        return redirect()->intended('/admin/dashboard');
     }
 
     /**
