@@ -73,7 +73,6 @@
                     @if ($filtered->isEmpty())
                         <p class="text-gray-400">Tidak ada jadwal hari ini</p>
                     @else
-
                         {{-- GRID JADWAL (sebelumnya column, sekarang horizontal) --}}
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 
