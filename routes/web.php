@@ -35,8 +35,7 @@ Route::get('/film/{film}', [UserFilmController::class, 'show'])->name('film.show
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/dashboard-user', [UserDashboardController::class, 'index'])
-        ->name('user.dashboard');
+    Route::get('/dashboard-user', [UserDashboardController::class, 'index'])->name('user.dashboard');
 });
 
 
@@ -45,15 +44,9 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 | ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
-Route::prefix('admin')
-    ->name('admin.')
-    ->middleware(['auth', 'role:admin'])
-    ->group(function () {
-
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
         // Dashboard (menggunakan controller)
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-            ->name('dashboard');
-
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         // CRUD
         Route::resource('genre', GenreController::class);
         Route::resource('film', AdminFilmController::class);

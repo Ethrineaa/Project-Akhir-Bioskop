@@ -22,7 +22,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate login
+        // Validasi input
         $credentials = $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
@@ -37,15 +37,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Dapatkan user
         $user = Auth::user();
 
-        // Jika admin → dashboard admin
+        // 🔥 ADMIN SELALU MASUK DASHBOARD TANPA INTENDED
         if ($user->role === 'admin') {
-            return redirect()->intended('/admin/dashboard');
+            return redirect('/admin/dashboard');
         }
 
-        // Jika user biasa → kembali ke halaman yang ingin diakses
+        // 🔥 USER BIASA → intended (hal terakhir)
         return redirect()->intended('/');
     }
 
