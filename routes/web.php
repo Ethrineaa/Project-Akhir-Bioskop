@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 // USER Controllers
 use App\Http\Controllers\User\FilmController as UserFilmController;
 use App\Http\Controllers\User\UserDashboardController;
+use App\Http\Controllers\User\PemesananController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,8 @@ Route::get('/film/{film}', [UserFilmController::class, 'show'])->name('film.show
 */
 Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/dashboard-user', [UserDashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('/pemesanan/kursi/{jadwal}',[PemesananController::class, 'pilihKursi'])->name('user.pemesanan.kursi');
+
 });
 
 
