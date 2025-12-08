@@ -29,7 +29,6 @@ Route::get('/', [LandingController::class, 'index'])->name('landing');
 // Detail + jadwal film (dapat dilihat tanpa login)
 Route::get('/film/{film}', [UserFilmController::class, 'show'])->name('film.show');
 
-
 /*
 |--------------------------------------------------------------------------
 | USER ROUTES
@@ -37,17 +36,21 @@ Route::get('/film/{film}', [UserFilmController::class, 'show'])->name('film.show
 */
 Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/dashboard-user', [UserDashboardController::class, 'index'])->name('user.dashboard');
-    Route::get('/pemesanan/kursi/{jadwal}',[PemesananController::class, 'pilihKursi'])->name('user.pemesanan.kursi');
+    Route::resource('pemesanan', PemesananController::class)->only(['store', 'index', 'show']);
 
+    // Custom route untuk halaman PILIH KURSI
+    Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])->name('pemesanan.kursi');
 });
-
 
 /*
 |--------------------------------------------------------------------------
 | ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'role:admin'])
+    ->group(function () {
         // Dashboard (menggunakan controller)
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         // CRUD
@@ -57,7 +60,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
         Route::resource('kursi', KursiController::class);
         Route::resource('jadwal', JadwalController::class);
     });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -71,4 +73,4 @@ Route::middleware('auth')->group(function () {
 });
 
 // Auth (login, register, logout)
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
