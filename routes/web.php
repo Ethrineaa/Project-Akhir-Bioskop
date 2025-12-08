@@ -34,13 +34,18 @@ Route::get('/film/{film}', [UserFilmController::class, 'show'])->name('film.show
 | USER ROUTES
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/dashboard-user', [UserDashboardController::class, 'index'])->name('user.dashboard');
-    Route::resource('pemesanan', PemesananController::class)->only(['store', 'index', 'show']);
+Route::prefix('user')
+    ->name('user.')
+    ->middleware(['auth', 'role:user'])
+    ->group(function () {
+        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 
-    // Custom route untuk halaman PILIH KURSI
-    Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])->name('pemesanan.kursi');
-});
+        // resource untuk pemesanan
+        Route::resource('pemesanan', PemesananController::class)->only(['store', 'index', 'show']);
+
+        // custom route pilih kursi
+        Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])->name('pemesanan.kursi');
+    });
 
 /*
 |--------------------------------------------------------------------------
