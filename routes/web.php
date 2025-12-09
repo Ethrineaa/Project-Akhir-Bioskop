@@ -38,6 +38,9 @@ Route::prefix('user')
     ->name('user.')
     ->middleware(['auth'])
     ->group(function () {
+        Route::get('/user/dashboard', function () {
+            return view('welcome'); // KAMU MAU TAMPILANNYA SAMA
+        })->name('user.dashboard');
         Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])->name('pemesanan.kursi');
 
         Route::post('/pemesanan/store', [PemesananController::class, 'store'])->name('pemesanan.store');
