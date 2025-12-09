@@ -36,17 +36,19 @@ Route::get('/film/{film}', [UserFilmController::class, 'show'])->name('film.show
 */
 Route::prefix('user')
     ->name('user.')
-    ->middleware(['auth'])
+    ->middleware(['auth', 'role:user'])
     ->group(function () {
-        Route::get('/user/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
-        Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])->name('pemesanan.kursi');
 
-        Route::post('/pemesanan/store', [PemesananController::class, 'store'])->name('pemesanan.store');
+        Route::get('/dashboard', [UserDashboardController::class, 'index'])
+            ->name('dashboard');
 
-        Route::get('/pemesanan', [PemesananController::class, 'index'])->name('pemesanan.index');
+        Route::resource('pemesanan', PemesananController::class)
+            ->only(['store', 'index', 'show']);
 
-        Route::get('/pemesanan/{id}', [PemesananController::class, 'show'])->name('pemesanan.show');
+        Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])
+            ->name('pemesanan.kursi');
     });
+
 
 /*
 |--------------------------------------------------------------------------
