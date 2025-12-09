@@ -36,15 +36,15 @@ Route::get('/film/{film}', [UserFilmController::class, 'show'])->name('film.show
 */
 Route::prefix('user')
     ->name('user.')
-    ->middleware(['auth', 'role:user'])
+    ->middleware(['auth'])
     ->group(function () {
-        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
-
-        // resource untuk pemesanan
-        Route::resource('pemesanan', PemesananController::class)->only(['store', 'index', 'show']);
-
-        // custom route pilih kursi
         Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])->name('pemesanan.kursi');
+
+        Route::post('/pemesanan/store', [PemesananController::class, 'store'])->name('pemesanan.store');
+
+        Route::get('/pemesanan', [PemesananController::class, 'index'])->name('pemesanan.index');
+
+        Route::get('/pemesanan/{id}', [PemesananController::class, 'show'])->name('pemesanan.show');
     });
 
 /*
