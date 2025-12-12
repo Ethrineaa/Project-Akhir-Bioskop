@@ -13,7 +13,7 @@ class JadwalController extends Controller
      */
     public function index()
     {
-        //
+        //fyuftftyft
     }
 
     /**
@@ -22,7 +22,7 @@ class JadwalController extends Controller
     public function create()
     {
         //
-    }   
+    }
 
     /**
      * Store a newly created resource in storage.
