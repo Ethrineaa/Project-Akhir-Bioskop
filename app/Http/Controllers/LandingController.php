@@ -19,7 +19,7 @@ class LandingController extends Controller
         // Jika All atau tidak memilih apapun
         else {
             $films = Film::latest()->get();
-        }qqq
+        }
 
         return view('welcome', compact('films', 'genres'));
     }
