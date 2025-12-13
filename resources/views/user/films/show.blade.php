@@ -1,38 +1,57 @@
 @extends('layouts.landing')
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 py-10"
-     x-data="{ selectedDay: null, openLogin: false }">
 
-    {{-- DETAIL FILM --}}
-    <div class="flex flex-col md:flex-row gap-6">
-        <img src="{{ asset('posters/' . $film->poster) }}" class="w-60 rounded-lg shadow">
+<div class="relative min-h-screen bg-black text-white">
 
-        <div class="flex-1">
-            <h1 class="text-3xl font-bold">{{ $film->judul }}</h1>
+```
+{{-- HERO SECTION --}}
+<div class="relative">
+    <img src="{{ asset('posters/' . $film->poster) }}" class="w-full h-[520px] object-cover opacity-40">
+    <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
 
-            {{-- SINOPSIS --}}
-            <div class="mt-3 text-gray-200 leading-relaxed" x-data="{ expand: false }">
-                <p class="font-semibold">Sinopsis:</p>
-                <p x-show="expand" x-collapse>{{ $film->sinopsis }}</p>
-                <p x-show="!expand" x-collapse>{{ Str::limit($film->sinopsis, 180) }}</p>
+    <div class="absolute inset-0 flex items-center">
+        <div class="max-w-6xl mx-auto px-6">
+            <h1 class="text-5xl font-extrabold leading-tight">
+                {{ $film->judul }}
+            </h1>
 
-                <button @click="expand = !expand" class="mt-2 text-blue-400 hover:underline">
-                    <span x-show="!expand">Read more</span>
-                    <span x-show="expand">Read less</span>
-                </button>
+            {{-- TAGS --}}
+            <div class="flex gap-2 mt-4 text-xs">
+                <span class="px-3 py-1 rounded-full bg-emerald-600">{{ $film->genre->nama }}</span>
+                <span class="px-3 py-1 rounded-full bg-gray-700">{{ $film->durasi }} Menit</span>
+                <span class="px-3 py-1 rounded-full bg-gray-700">PG-13</span>
             </div>
 
-            <div class="mt-4 space-y-1 text-gray-200">
-                <p><span class="font-semibold">Durasi:</span> {{ $film->durasi }} menit</p>
-                <p><span class="font-semibold">Harga Tiket:</span> Rp {{ number_format($film->harga, 0, ',', '.') }}</p>
-                <p><span class="font-semibold">Genre:</span> {{ $film->genre->nama }}</p>
+            {{-- HARGA --}}
+            <div class="flex items-center gap-3 mt-6">
+                <span class="text-2xl font-bold text-emerald-400">
+                    Rp {{ number_format($film->harga, 0, ',', '.') }}
+                </span>
+            </div>
+
+            {{-- SINOPSIS --}}
+            <p class="max-w-xl mt-4 text-gray-300 leading-relaxed">
+                {{ Str::limit($film->sinopsis, 220) }}
+            </p>
+
+            {{-- ACTION BUTTON --}}
+            <div class="flex gap-4 mt-6">
+                <a href="#jadwal" class="flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold">
+                    ▶ Watch Trailer
+                </a>
+                <button class="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-800 hover:bg-gray-700">
+                    ❤ Add to Watchlist
+                </button>
             </div>
         </div>
     </div>
+</div>
 
-    {{-- FILTER HARI --}}
-    <h2 class="text-2xl font-semibold mt-10">Pilih Hari Tayang</h2>
+{{-- JADWAL SECTION --}}
+<div id="jadwal" class="max-w-6xl mx-auto px-6 py-14" x-data="{ selectedDay: null }">
+
+    <h2 class="text-2xl font-bold mb-6">Pilih Hari Tayang</h2>
 
     @php
         $days = [];
@@ -41,128 +60,78 @@
         }
     @endphp
 
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mt-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
         @foreach ($days as $day)
             @php $dayKey = $day->format('Y-m-d'); @endphp
 
-            <div @click="selectedDay === '{{ $dayKey }}' ? selectedDay = null : selectedDay = '{{ $dayKey }}'"
-                class="cursor-pointer p-4 bg-gray-800 border border-gray-700 hover:bg-gray-700 rounded-lg shadow transition">
-                <h3 class="font-bold text-white">
-                    {{ $day->translatedFormat('l, d M') }}
-                </h3>
-            </div>
+            <button
+                @click="selectedDay = '{{ $dayKey }}'"
+                class="p-4 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-700">
+                <p class="font-semibold">{{ $day->translatedFormat('D') }}</p>
+                <p class="text-sm text-gray-400">{{ $day->format('d M') }}</p>
+            </button>
         @endforeach
     </div>
 
-    {{-- RESULT: JADWAL --}}
-    <div class="mt-6" x-show="selectedDay" x-collapse>
+    {{-- LIST JADWAL --}}
+    <div class="mt-10">
         @foreach ($days as $day)
             @php
                 $dayKey = $day->format('Y-m-d');
                 $filtered = $film->jadwals->filter(fn($j) => $j->tanggal == $dayKey);
             @endphp
 
-            <div x-show="selectedDay === '{{ $dayKey }}'" x-collapse>
-
-                <h3 class="text-xl font-semibold mb-3">
-                    Jadwal untuk {{ $day->translatedFormat('l, d M') }}
+            <div x-show="selectedDay === '{{ $dayKey }}'">
+                <h3 class="text-xl font-semibold mb-4">
+                    Jadwal {{ $day->translatedFormat('l, d M') }}
                 </h3>
 
-                {{-- Tidak ada jadwal --}}
                 @if ($filtered->isEmpty())
-                    <p class="text-gray-400">Tidak ada jadwal hari ini</p>
-
+                    <p class="text-gray-400">Tidak ada jadwal tersedia</p>
                 @else
-                    {{-- GRID JADWAL --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         @foreach ($filtered as $jadwal)
-                            <div class="p-4 bg-gray-900 rounded-lg border border-gray-700 shadow flex flex-col gap-1">
+                            @php
+                                $total = $jadwal->studio->kursis->count();
+                                $booked = $jadwal->pemesanan()->count();
+                                $available = $total - $booked;
+                            @endphp
 
-                                <p class="font-semibold">{{ $jadwal->studio->nama }}</p>
-
-                                <p class="text-gray-400 text-sm">
+                            <div class="p-5 rounded-xl bg-gray-900 border border-gray-800">
+                                <p class="font-bold">{{ $jadwal->studio->nama }}</p>
+                                <p class="text-sm text-gray-400 mt-1">
                                     {{ $jadwal->jam_mulai }} - {{ $jadwal->jam_selesai }}
                                 </p>
 
-                                {{-- KURSI --}}
-                                @php
-                                    $total = $jadwal->studio->kursis->count();
-                                    $booked = $jadwal->pemesanan()->count();
-                                    $available = $total - $booked;
-                                @endphp
-
-                                <p class="text-sm mt-1">
+                                <p class="text-sm mt-3">
                                     Kursi tersedia:
-                                    <span class="font-bold text-green-400">{{ $available }}</span>
+                                    <span class="font-bold text-emerald-400">{{ $available }}</span>
                                     / {{ $total }}
                                 </p>
 
-                                {{-- TOMBOL PESAN --}}
                                 @auth
                                     @if (auth()->user()->role === 'user')
                                         <a href="{{ route('user.pemesanan.kursi', $jadwal->id) }}"
-                                            class="mt-2 inline-block bg-blue-600 text-white px-4 py-1 rounded text-sm">
+                                           class="block mt-4 text-center bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg">
                                             Pesan Tiket
                                         </a>
                                     @endif
                                 @else
-                                    <button
-                                        @click="
-                                            openLogin = true;
-                                            document.getElementById('redirectInput').value = '{{ request()->fullUrl() }}'
-                                        "
-                                        class="mt-2 inline-block bg-blue-600 text-white px-4 py-1 rounded text-sm">
-                                        Pesan Tiket
-                                    </button>
+                                    <a href="{{ route('login') }}"
+                                       class="block mt-4 text-center bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg">
+                                        Login untuk Pesan
+                                    </a>
                                 @endauth
-
                             </div>
                         @endforeach
-
                     </div>
                 @endif
-
             </div>
         @endforeach
     </div>
 
-    {{-- MODAL LOGIN --}}
-    <div x-show="openLogin" x-transition.opacity
-        class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-
-        <div class="bg-gray-800 w-full max-w-sm p-6 rounded-lg shadow-lg border border-gray-700" x-transition.scale>
-
-            <h2 class="text-xl font-bold mb-4 text-center">Login Dulu</h2>
-
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-
-                {{-- redirect tujuan --}}
-                <input type="hidden" name="redirect" id="redirectInput">
-
-                <div class="mb-3">
-                    <label class="text-sm">Email</label>
-                    <input type="email" name="email"
-                        class="w-full p-2 rounded bg-gray-900 border border-gray-700">
-                </div>
-
-                <div class="mb-4">
-                    <label class="text-sm">Password</label>
-                    <input type="password" name="password"
-                        class="w-full p-2 rounded bg-gray-900 border border-gray-700">
-                </div>
-
-                <button class="w-full bg-blue-600 py-2 rounded">Login</button>
-            </form>
-
-            <button @click="openLogin=false"
-                class="mt-3 text-center w-full text-gray-400 hover:text-white">
-                Batal
-            </button>
-
-        </div>
-    </div>
+</div>
+```
 
 </div>
 @endsection
