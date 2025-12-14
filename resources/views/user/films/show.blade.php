@@ -39,9 +39,6 @@
                                 <span class="px-3 py-1 rounded-full bg-gray-700">
                                     {{ $film->durasi }} Menit
                                 </span>
-                                <span class="px-3 py-1 rounded-full bg-gray-700">
-                                    PG-13
-                                </span>
                             </div>
 
                             {{-- HARGA --}}
@@ -51,11 +48,6 @@
                                 </span>
                             </div>
 
-                            {{-- SINOPSIS --}}
-                            <p class="max-w-xl mt-4 text-gray-300 leading-relaxed">
-                                {{ Str::limit($film->sinopsis, 220) }}
-                            </p>
-
                             {{-- ACTION --}}
                             <div class="flex gap-4 mt-6">
                                 <a href="#jadwal"
@@ -63,10 +55,6 @@
                                     ▶ Watch Trailer
                                 </a>
 
-                                <button
-                                    class="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-800 hover:bg-gray-700">
-                                    ❤ Add to Watchlist
-                                </button>
                             </div>
                         </div>
 
@@ -74,6 +62,18 @@
                 </div>
             </div>
         </div>
+
+        {{-- ======================
+    SINOPSIS SECTION
+====================== --}}
+        <div class="max-w-6xl mx-auto px-6 mt-16">
+            <h2 class="text-2xl font-bold mb-4">Sinopsis</h2>
+
+            <p class="text-gray-300 leading-relaxed text-justify">
+                {{ $film->sinopsis }}
+            </p>
+        </div>
+
 
 
         {{-- ======================
