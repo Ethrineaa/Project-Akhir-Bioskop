@@ -4,59 +4,77 @@
     <div class="relative min-h-screen bg-black text-white">
 
         {{-- ======================
-        HERO SECTION
-    ======================= --}}
+    HERO SECTION
+====================== --}}
         <div class="relative">
+
+            {{-- POSTER LANDSCAPE (BACKGROUND) --}}
             <img src="{{ asset('posters/' . $film->poster) }}" alt="{{ $film->judul }}"
                 class="w-full h-[520px] object-cover opacity-40">
 
             <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
 
             <div class="absolute inset-0 flex items-center">
-                <div class="max-w-6xl mx-auto px-6">
-                    <h1 class="text-5xl font-extrabold leading-tight">
-                        {{ $film->judul }}
-                    </h1>
+                <div class="max-w-6xl mx-auto px-6 w-full">
 
-                    {{-- TAG --}}
-                    <div class="flex gap-2 mt-4 text-xs">
-                        <span class="px-3 py-1 rounded-full bg-emerald-600">
-                            {{ $film->genre->nama }}
-                        </span>
-                        <span class="px-3 py-1 rounded-full bg-gray-700">
-                            {{ $film->durasi }} Menit
-                        </span>
-                        <span class="px-3 py-1 rounded-full bg-gray-700">
-                            PG-13
-                        </span>
-                    </div>
+                    <div class="flex flex-col md:flex-row gap-8 items-center md:items-start">
 
-                    {{-- HARGA --}}
-                    <div class="flex items-center gap-3 mt-6">
-                        <span class="text-2xl font-bold text-emerald-400">
-                            Rp {{ number_format($film->harga, 0, ',', '.') }}
-                        </span>
-                    </div>
+                        {{-- POSTER PERSEGI (CARD) --}}
+                        <div class="w-56 flex-shrink-0">
+                            <img src="{{ asset('posters/' . $film->poster) }}" alt="{{ $film->judul }}"
+                                class="rounded-xl shadow-2xl border border-gray-800">
+                        </div>
 
-                    {{-- SINOPSIS --}}
-                    <p class="max-w-xl mt-4 text-gray-300 leading-relaxed">
-                        {{ Str::limit($film->sinopsis, 220) }}
-                    </p>
+                        {{-- INFO FILM --}}
+                        <div>
+                            <h1 class="text-5xl font-extrabold leading-tight">
+                                {{ $film->judul }}
+                            </h1>
 
-                    {{-- ACTION --}}
-                    <div class="flex gap-4 mt-6">
-                        <a href="#jadwal"
-                            class="flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold">
-                            ▶ Watch Trailer
-                        </a>
+                            {{-- TAG --}}
+                            <div class="flex gap-2 mt-4 text-xs">
+                                <span class="px-3 py-1 rounded-full bg-emerald-600">
+                                    {{ $film->genre->nama }}
+                                </span>
+                                <span class="px-3 py-1 rounded-full bg-gray-700">
+                                    {{ $film->durasi }} Menit
+                                </span>
+                                <span class="px-3 py-1 rounded-full bg-gray-700">
+                                    PG-13
+                                </span>
+                            </div>
 
-                        <button class="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-800 hover:bg-gray-700">
-                            ❤ Add to Watchlist
-                        </button>
+                            {{-- HARGA --}}
+                            <div class="flex items-center gap-3 mt-6">
+                                <span class="text-2xl font-bold text-emerald-400">
+                                    Rp {{ number_format($film->harga, 0, ',', '.') }}
+                                </span>
+                            </div>
+
+                            {{-- SINOPSIS --}}
+                            <p class="max-w-xl mt-4 text-gray-300 leading-relaxed">
+                                {{ Str::limit($film->sinopsis, 220) }}
+                            </p>
+
+                            {{-- ACTION --}}
+                            <div class="flex gap-4 mt-6">
+                                <a href="#jadwal"
+                                    class="flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold">
+                                    ▶ Watch Trailer
+                                </a>
+
+                                <button
+                                    class="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-800 hover:bg-gray-700">
+                                    ❤ Add to Watchlist
+                                </button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
+
 
         {{-- ======================
         JADWAL SECTION
