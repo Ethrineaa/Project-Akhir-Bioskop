@@ -20,4 +20,9 @@ class Kursi extends Model
     {
         return $this->belongsToMany(Pemesanan::class, 'kursi_pemesanan', 'kursi_id', 'pemesanan_id');
     }
+
+    public function film()
+    {
+        return $this->belongsTo(Film::class);
+    }
 }

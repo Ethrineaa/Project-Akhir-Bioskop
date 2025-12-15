@@ -7,11 +7,17 @@
         HEADER
     ====================== --}}
         <div class="mb-8">
-            <h1 class="text-3xl font-bold">{{ $jadwal->film->judul }}</h1>
+            <h1 class="text-3xl font-bold">
+                {{ $jadwal->film->judul }}
+            </h1>
             <p class="text-sm text-gray-400">
-                {{ $jadwal->tanggal }} • {{ $jadwal->jam }}
+                {{ $jadwal->film->genre->nama }} •
+                Studio {{ $jadwal->studio->nama }} •
+                {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
             </p>
+
         </div>
+
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
