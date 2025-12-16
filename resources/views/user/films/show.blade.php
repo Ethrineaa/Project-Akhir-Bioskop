@@ -13,18 +13,18 @@
 
         <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
 
+        {{-- TOMBOL KEMBALI (FLOATING - TIDAK NGESER LAYOUT) --}}
+        <a href="{{ url()->previous() }}"
+           class="absolute top-6 left-4 sm:left-6 z-20
+                  inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold
+                  rounded-lg bg-black/70 hover:bg-black/90
+                  backdrop-blur border border-gray-600 transition">
+            ← Kembali
+        </a>
+
         {{-- HERO CONTENT --}}
         <div class="relative flex items-start pt-16 sm:pt-20 md:pt-24">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 w-full">
-
-                {{-- TOMBOL KEMBALI --}}
-                <div class="mb-5">
-                    <a href="{{ url()->previous() }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold
-                               rounded-lg bg-blue-600 hover:bg-blue-500 transition">
-                        ← Kembali
-                    </a>
-                </div>
 
                 <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
 
