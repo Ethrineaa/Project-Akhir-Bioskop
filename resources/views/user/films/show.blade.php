@@ -158,11 +158,11 @@
     {{-- ======================
         TOMBOL KEMBALI (PALING BAWAH)
     ====================== --}}
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 pb-16 text-center">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
         <a href="{{ url()->previous() }}"
             class="inline-flex items-center gap-2 px-6 py-3 text-sm sm:text-base font-semibold
-                   rounded-xl bg-gray-800 hover:bg-gray-700
-                   border border-gray-600 transition">
+                    rounded-xl bg-gray-800 hover:bg-gray-700
+                    border border-gray-600 transition">
             ← Kembali ke Daftar Film
         </a>
     </div>
