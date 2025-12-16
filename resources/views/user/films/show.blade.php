@@ -19,8 +19,8 @@
                 <div class="mb-4">
                     <a href="{{ url()->previous() }}"
                         class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold
-               rounded-lg bg-gray-800/80 hover:bg-gray-700
-               border border-gray-600 backdrop-blur transition">
+                rounded-lg bg-gray-800/80 hover:bg-gray-700
+                border border-gray-600 backdrop-blur transition">
                         ← Kembali
                     </a>
                 </div>
