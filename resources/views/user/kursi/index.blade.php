@@ -59,7 +59,7 @@
                     @foreach ($groupedSeats as $row => $seats)
                         <div class="grid grid-cols-11 gap-3 justify-center mx-auto w-fit">
                             @foreach ($seats->values() as $index => $item)
-                                {{-- LORONG TENGAH --}}
+                                {{-- LORONG --}}
                                 @if ($seats->count() === 10 && $index === 5)
                                     <div></div>
                                 @endif
@@ -78,8 +78,8 @@
             </div>
 
             {{-- ======================
-    SUMMARY
-====================== --}}
+            SUMMARY
+        ====================== --}}
             <div class="bg-[#111827] rounded-2xl p-6 h-fit">
 
                 <h3 class="text-lg font-semibold mb-1">Selected Seats</h3>
@@ -112,104 +112,119 @@
                     <span class="text-blue-500">$<span id="grandTotal">0.00</span></span>
                 </div>
 
-                {{-- BACK --}}
-                <a href="{{ url()->previous() }}"
-                    class="flex items-center justify-center gap-2 py-3 rounded-xl
-              bg-gray-800 hover:bg-gray-700 transition font-semibold">
-                    ← Back
-                </a>
-
-
-                <form action="{{ route('user.pemesanan.store') }}" method="POST">
+                {{-- FORM --}}
+                <form action="{{ route('user.pemesanan.store') }}" method="POST" class="mt-6">
                     @csrf
                     <input type="hidden" id="seatInput" name="seats">
                     <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
 
-                    <button
-                        class="w-full bg-blue-600 hover:bg-blue-700 transition
-                       py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
-                        Pay Now
-                    </button>
+                    <div class="flex gap-3">
+                        {{-- BACK --}}
+                        <a href="{{ url()->previous() }}"
+                            class="flex-1 flex items-center justify-center
+                               py-3 rounded-xl bg-gray-800
+                               hover:bg-gray-700 transition font-semibold">
+                            ← Back
+                        </a>
+
+                        {{-- PAY --}}
+                        <button
+                            class="flex-1 bg-blue-600 hover:bg-blue-700 transition
+                               py-3 rounded-xl font-semibold
+                               flex items-center justify-center gap-2">
+                            Pay Now
+                        </button>
+                    </div>
                 </form>
+
             </div>
         </div>
+    </div>
 
+    {{-- ======================
+    SCRIPT
+====================== --}}
+    <script>
+        const seatPrice = 14;
+        const bookingFee = 2;
+        let selected = [];
 
-        <script>
-            const seatPrice = 14;
-            const bookingFee = 2;
-            let selected = [];
+        const seatList = document.getElementById('seatList');
+        const seatInput = document.getElementById('seatInput');
+        const ticketCount = document.getElementById('ticketCount');
+        const ticketTotal = document.getElementById('ticketTotal');
+        const grandTotal = document.getElementById('grandTotal');
 
-            const seatList = document.getElementById('seatList');
-            const seatInput = document.getElementById('seatInput');
-            const ticketCount = document.getElementById('ticketCount');
-            const ticketTotal = document.getElementById('ticketTotal');
-            const grandTotal = document.getElementById('grandTotal');
+        function removeSeat(seat) {
+            selected = selected.filter(s => s !== seat);
 
-            function removeSeat(seat) {
-                selected = selected.filter(s => s !== seat);
-
-                const btn = document.querySelector(`[data-seat="${seat}"]`);
-                if (btn) {
-                    btn.classList.remove('bg-blue-600', 'text-white');
-                    btn.classList.add('border', 'border-blue-500', 'text-blue-400');
-                }
-
-                renderSummary();
+            const btn = document.querySelector(`[data-seat="${seat}"]`);
+            if (btn) {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('border', 'border-blue-500', 'text-blue-400');
             }
 
-            function renderSummary() {
-                seatList.innerHTML = '';
+            renderSummary();
+        }
 
-                if (selected.length === 0) {
-                    seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
-                } else {
-                    selected.forEach(seat => {
-                        seatList.innerHTML += `
-                    <div class="flex items-center justify-between
-                                bg-[#0B1220] rounded-xl px-4 py-3 border border-gray-700">
+        function renderSummary() {
+            seatList.innerHTML = '';
 
-                        <div class="flex items-center gap-3">
-                            <!-- ICON SEAT -->
-                            <div class="text-red-500 text-xl">🪑</div>
+            if (selected.length === 0) {
+                seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
+            } else {
+                selected.forEach(seat => {
+                    seatList.innerHTML += `
+                <div class="flex items-center justify-between
+                            bg-[#0B1220] rounded-xl px-4 py-3 border border-gray-700">
 
-                            <div>
-                                <p class="font-medium">Seat ${seat}</p>
-                                <p class="text-xs text-gray-400">Standard</p>
-                            </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 flex items-center justify-center
+                                    rounded-lg bg-blue-600/20 border border-blue-500">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="w-6 h-6 text-blue-400"
+                                 fill="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path d="M7 13v-2a3 3 0 0 1 6 0v2h3a1 1 0 0 1 1 1v5h-2v-3H9v3H7v-5a1 1 0 0 1 1-1h-1z"/>
+                            </svg>
                         </div>
 
-                        <div class="flex items-center gap-4">
-                            <span class="font-semibold">$${seatPrice.toFixed(2)}</span>
-                            <button onclick="removeSeat('${seat}')"
-                                    class="text-gray-400 hover:text-red-500 text-xl">
-                                ×
-                            </button>
+                        <div>
+                            <p class="font-medium">Seat ${seat}</p>
+                            <p class="text-xs text-gray-400">Standard</p>
                         </div>
                     </div>
-                `;
-                    });
-                }
 
-                ticketCount.innerText = selected.length;
-                ticketTotal.innerText = (selected.length * seatPrice).toFixed(2);
-                grandTotal.innerText = (selected.length * seatPrice + bookingFee).toFixed(2);
-                seatInput.value = selected.join(',');
+                    <div class="flex items-center gap-4">
+                        <span class="font-semibold">$${seatPrice.toFixed(2)}</span>
+                        <button onclick="removeSeat('${seat}')"
+                                class="text-gray-400 hover:text-red-500 text-xl">
+                            ×
+                        </button>
+                    </div>
+                </div>`;
+                });
             }
 
-            document.querySelectorAll('.seat').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const seat = this.dataset.seat;
+            ticketCount.innerText = selected.length;
+            ticketTotal.innerText = (selected.length * seatPrice).toFixed(2);
+            grandTotal.innerText = (selected.length * seatPrice + bookingFee).toFixed(2);
+            seatInput.value = selected.join(',');
+        }
 
-                    if (selected.includes(seat)) {
-                        removeSeat(seat);
-                    } else {
-                        selected.push(seat);
-                        this.classList.remove('border', 'border-blue-500', 'text-blue-400');
-                        this.classList.add('bg-blue-600', 'text-white');
-                        renderSummary();
-                    }
-                });
+        document.querySelectorAll('.seat').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const seat = this.dataset.seat;
+
+                if (selected.includes(seat)) {
+                    removeSeat(seat);
+                } else {
+                    selected.push(seat);
+                    this.classList.remove('border', 'border-blue-500', 'text-blue-400');
+                    this.classList.add('bg-blue-600', 'text-white');
+                    renderSummary();
+                }
             });
-        </script>
-    @endsection
+        });
+    </script>
+@endsection
