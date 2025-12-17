@@ -135,61 +135,81 @@
 </div>
 
 
-    {{-- ======================
-    SCRIPT
-====================== --}}
-    <script>
-        const seatPrice = 14;
-        const bookingFee = 2;
-        let selected = [];
+  <script>
+    const seatPrice = 14;
+    const bookingFee = 2;
+    let selected = [];
 
-        const seatList = document.getElementById('seatList');
-        const seatInput = document.getElementById('seatInput');
-        const ticketCount = document.getElementById('ticketCount');
-        const ticketTotal = document.getElementById('ticketTotal');
-        const grandTotal = document.getElementById('grandTotal');
+    const seatList = document.getElementById('seatList');
+    const seatInput = document.getElementById('seatInput');
+    const ticketCount = document.getElementById('ticketCount');
+    const ticketTotal = document.getElementById('ticketTotal');
+    const grandTotal = document.getElementById('grandTotal');
 
-        function renderSummary() {
-            seatList.innerHTML = '';
+    function removeSeat(seat) {
+        selected = selected.filter(s => s !== seat);
 
-            if (selected.length === 0) {
-                seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
-            } else {
-                selected.forEach(seat => {
-                    seatList.innerHTML += `
-                    <div class="flex justify-between items-center bg-[#0B1220] rounded-xl px-4 py-3">
-                        <div>
-                            <p class="font-medium">Row ${seat.charAt(0)}, Seat ${seat.slice(1)}</p>
-                            <p class="text-xs text-gray-400">Standard</p>
-                        </div>
-                        <span class="font-medium">$${seatPrice.toFixed(2)}</span>
-                    </div>
-                `;
-                });
-            }
-
-            ticketCount.innerText = selected.length;
-            ticketTotal.innerText = (selected.length * seatPrice).toFixed(2);
-            grandTotal.innerText = (selected.length * seatPrice + bookingFee).toFixed(2);
-            seatInput.value = selected.join(',');
+        const btn = document.querySelector(`[data-seat="${seat}"]`);
+        if (btn) {
+            btn.classList.remove('bg-blue-600', 'text-white');
+            btn.classList.add('border', 'border-blue-500', 'text-blue-400');
         }
 
-        document.querySelectorAll('.seat').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const seat = this.dataset.seat;
+        renderSummary();
+    }
 
-                if (selected.includes(seat)) {
-                    selected = selected.filter(s => s !== seat);
-                    this.classList.remove('bg-blue-600', 'text-white');
-                    this.classList.add('border', 'border-blue-500', 'text-blue-400');
-                } else {
-                    selected.push(seat);
-                    this.classList.remove('border', 'border-blue-500', 'text-blue-400');
-                    this.classList.add('bg-blue-600', 'text-white');
-                }
+    function renderSummary() {
+        seatList.innerHTML = '';
 
-                renderSummary();
+        if (selected.length === 0) {
+            seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
+        } else {
+            selected.forEach(seat => {
+                seatList.innerHTML += `
+                    <div class="flex items-center justify-between
+                                bg-[#0B1220] rounded-xl px-4 py-3 border border-gray-700">
+
+                        <div class="flex items-center gap-3">
+                            <!-- ICON SEAT -->
+                            <div class="text-red-500 text-xl">🪑</div>
+
+                            <div>
+                                <p class="font-medium">Seat ${seat}</p>
+                                <p class="text-xs text-gray-400">Standard</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <span class="font-semibold">$${seatPrice.toFixed(2)}</span>
+                            <button onclick="removeSeat('${seat}')"
+                                    class="text-gray-400 hover:text-red-500 text-xl">
+                                ×
+                            </button>
+                        </div>
+                    </div>
+                `;
             });
+        }
+
+        ticketCount.innerText = selected.length;
+        ticketTotal.innerText = (selected.length * seatPrice).toFixed(2);
+        grandTotal.innerText = (selected.length * seatPrice + bookingFee).toFixed(2);
+        seatInput.value = selected.join(',');
+    }
+
+    document.querySelectorAll('.seat').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const seat = this.dataset.seat;
+
+            if (selected.includes(seat)) {
+                removeSeat(seat);
+            } else {
+                selected.push(seat);
+                this.classList.remove('border', 'border-blue-500', 'text-blue-400');
+                this.classList.add('bg-blue-600', 'text-white');
+                renderSummary();
+            }
         });
-    </script>
+    });
+</script>
 @endsection
