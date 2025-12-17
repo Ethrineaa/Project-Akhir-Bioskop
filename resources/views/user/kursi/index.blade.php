@@ -124,92 +124,98 @@
         </div>
     </div>
 
-    {{-- SCRIPT --}}
-    <script>
-        // HARGA DARI DATABASE
-        const seatPrice = {{ $jadwal->harga }};
-        let selected = [];
+   <script>
+    const seatPrice = {{ $jadwal->film->harga }};
+    let selected = [];
 
-        const seatList = document.getElementById('seatList');
-        const seatInput = document.getElementById('seatInput');
-        const ticketCount = document.getElementById('ticketCount');
-        const ticketTotal = document.getElementById('ticketTotal');
-        const grandTotal = document.getElementById('grandTotal');
+    const seatList = document.getElementById('seatList');
+    const seatInput = document.getElementById('seatInput');
+    const ticketCount = document.getElementById('ticketCount');
+    const ticketTotal = document.getElementById('ticketTotal');
+    const grandTotal = document.getElementById('grandTotal');
 
-        const rupiah = (angka) => {
-            return 'Rp ' + angka.toLocaleString('id-ID');
-        };
+    const rupiah = (angka) => {
+        return 'Rp ' + angka.toLocaleString('id-ID');
+    };
 
-        function removeSeat(seat) {
-            selected = selected.filter(s => s !== seat);
+    function removeSeat(seat) {
+        selected = selected.filter(s => s !== seat);
 
-            const btn = document.querySelector(`[data-seat="${seat}"]`);
-            if (btn) {
-                btn.classList.remove('bg-blue-600', 'text-white');
-                btn.classList.add('border', 'border-blue-500', 'text-blue-400');
-            }
-
-            renderSummary();
+        const btn = document.querySelector(`[data-seat="${seat}"]`);
+        if (btn) {
+            btn.classList.remove('bg-blue-600', 'text-white');
+            btn.classList.add('border', 'border-blue-500', 'text-blue-400');
         }
 
-        function renderSummary() {
-            seatList.innerHTML = '';
+        renderSummary();
+    }
 
-            if (selected.length === 0) {
-                seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
-            } else {
-                selected.forEach(seat => {
-                    seatList.innerHTML += `
-                <div class="flex items-center justify-between
-                            bg-[#0B1220] rounded-xl px-4 py-3 border border-gray-700">
+    function renderSummary() {
+        seatList.innerHTML = '';
 
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 flex items-center justify-center
-                                    rounded-lg bg-blue-600/20 border border-blue-500">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="w-6 h-6 text-blue-400"
-                                 fill="currentColor"
-                                 viewBox="0 0 24 24">
-                                <path d="M7 13v-2a3 3 0 0 1 6 0v2h3a1 1 0 0 1 1 1v5h-2v-3H9v3H7v-5a1 1 0 0 1 1-1h-1z"/>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <p class="font-medium">Seat ${seat}</p>
-                            <p class="text-xs text-gray-400">Standard</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-4">
-                        <span class="font-semibold">${rupiah(seatPrice)}</span>
-                        <button onclick="removeSeat('${seat}')"
-                                class="text-gray-400 hover:text-red-500 text-xl">
-                            ×
-                        </button>
-                    </div>
-                </div>`;
-                });
-            }
-
-            ticketCount.innerText = selected.length;
-            ticketTotal.innerText = rupiah(selected.length * seatPrice);
-            grandTotal.innerText = rupiah(selected.length * seatPrice);
-            seatInput.value = selected.join(',');
+        if (selected.length === 0) {
+            seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
+            ticketCount.innerText = 0;
+            ticketTotal.innerText = rupiah(0);
+            grandTotal.innerText = rupiah(0);
+            return;
         }
 
-        document.querySelectorAll('.seat').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const seat = this.dataset.seat;
+        selected.forEach(seat => {
+            seatList.innerHTML += `
+            <div class="flex items-center justify-between
+                        bg-[#0B1220] rounded-xl px-4 py-3 border border-gray-700">
 
-                if (selected.includes(seat)) {
-                    removeSeat(seat);
-                } else {
-                    selected.push(seat);
-                    this.classList.remove('border', 'border-blue-500', 'text-blue-400');
-                    this.classList.add('bg-blue-600', 'text-white');
-                    renderSummary();
-                }
-            });
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 flex items-center justify-center
+                                rounded-lg bg-blue-600/20 border border-blue-500">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="w-6 h-6 text-blue-400"
+                             fill="currentColor"
+                             viewBox="0 0 24 24">
+                            <path d="M7 13v-2a3 3 0 0 1 6 0v2h3a1 1 0 0 1 1 1v5h-2v-3H9v3H7v-5a1 1 0 0 1 1-1h-1z"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <p class="font-medium">Seat ${seat}</p>
+                        <p class="text-xs text-gray-400">Standard</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <span class="font-semibold">${rupiah(seatPrice)}</span>
+                    <button type="button"
+                            onclick="removeSeat('${seat}')"
+                            class="text-gray-400 hover:text-red-500 text-xl">
+                        ×
+                    </button>
+                </div>
+            </div>`;
         });
-    </script>
+
+        ticketCount.innerText = selected.length;
+        ticketTotal.innerText = rupiah(selected.length * seatPrice);
+        grandTotal.innerText = rupiah(selected.length * seatPrice);
+        seatInput.value = selected.join(',');
+    }
+
+    document.querySelectorAll('.seat').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault(); // 🔥 INI KUNCI UTAMA
+
+            const seat = this.dataset.seat;
+
+            if (selected.includes(seat)) {
+                removeSeat(seat);
+            } else {
+                selected.push(seat);
+                this.classList.remove('border', 'border-blue-500', 'text-blue-400');
+                this.classList.add('bg-blue-600', 'text-white');
+                renderSummary();
+            }
+        });
+    });
+</script>
+
 @endsection
