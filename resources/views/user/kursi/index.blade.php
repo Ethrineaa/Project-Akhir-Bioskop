@@ -77,58 +77,63 @@
                 </div>
             </div>
 
-            {{-- ======================
-            SUMMARY
-        ====================== --}}
-            <div class="bg-[#111827] rounded-2xl p-6 h-fit">
+          {{-- ======================
+    SUMMARY
+====================== --}}
+<div class="bg-[#111827] rounded-2xl p-6 h-fit">
 
-                <h3 class="text-lg font-semibold mb-1">Selected Seats</h3>
-                <p class="text-sm text-gray-400 mb-4">
-                    {{ $jadwal->film->judul }} • {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
-                </p>
+    <h3 class="text-lg font-semibold mb-1">Selected Seats</h3>
+    <p class="text-sm text-gray-400 mb-4">
+        {{ $jadwal->film->judul }} • {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
+    </p>
 
-                {{-- LIST --}}
-                <div id="seatList" class="space-y-3 mb-6">
-                    <p class="text-gray-500 text-sm">No seat selected</p>
-                </div>
+    {{-- LIST --}}
+    <div id="seatList" class="space-y-3 mb-6">
+        <p class="text-gray-500 text-sm">No seat selected</p>
+    </div>
 
-                {{-- PRICE --}}
-                <div class="border-t border-gray-700 pt-4 space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">
-                            Tickets (<span id="ticketCount">0</span>)
-                        </span>
-                        <span>$<span id="ticketTotal">0.00</span></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">Booking Fee</span>
-                        <span>$2.00</span>
-                    </div>
-                </div>
-
-                {{-- TOTAL --}}
-                <div class="flex justify-between items-center mt-4 text-lg font-semibold">
-                    <span>Total</span>
-                    <span class="text-blue-500">$<span id="grandTotal">0.00</span></span>
-                </div>
-
-                {{-- FORM --}}
-                <form action="{{ route('user.pemesanan.store') }}" method="POST" class="mt-6">
-                    @csrf
-                    <input type="hidden" id="seatInput" name="seats">
-                    <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
-
-                    <button
-                        class="w-full bg-blue-600 hover:bg-blue-700 transition py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
-                        Pay Now
-                    </button>
-                </form>
-            </div>
-
+    {{-- PRICE --}}
+    <div class="border-t border-gray-700 pt-4 space-y-2 text-sm">
+        <div class="flex justify-between">
+            <span class="text-gray-400">
+                Tickets (<span id="ticketCount">0</span>)
+            </span>
+            <span>$<span id="ticketTotal">0.00</span></span>
+        </div>
+        <div class="flex justify-between">
+            <span class="text-gray-400">Booking Fee</span>
+            <span>$2.00</span>
         </div>
     </div>
 
-   
+    {{-- TOTAL --}}
+    <div class="flex justify-between items-center mt-4 text-lg font-semibold">
+        <span>Total</span>
+        <span class="text-blue-500">$<span id="grandTotal">0.00</span></span>
+    </div>
+
+    {{-- ACTION BUTTONS --}}
+    <div class="mt-6 grid grid-cols-2 gap-3">
+        <a href="{{ route('user.film.show', $jadwal->film->id) }}"
+           class="flex items-center justify-center gap-2 py-3 rounded-xl
+                  bg-gray-800 hover:bg-gray-700 transition font-semibold">
+            ← Back
+        </a>
+
+        <form action="{{ route('user.pemesanan.store') }}" method="POST">
+            @csrf
+            <input type="hidden" id="seatInput" name="seats">
+            <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
+
+            <button
+                class="w-full bg-blue-600 hover:bg-blue-700 transition
+                       py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
+                Pay Now
+            </button>
+        </form>
+    </div>
+</div>
+
 
     {{-- ======================
     SCRIPT
