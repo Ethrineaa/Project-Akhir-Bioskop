@@ -112,60 +112,60 @@
                     <span class="text-blue-500">$<span id="grandTotal">0.00</span></span>
                 </div>
 
-                {{-- ACTION BUTTONS --}}
-                <div class="mt-6 grid grid-cols-2 gap-3">
-                    <a href="{{ route('user.film.show', $jadwal->film->id) }}"
-                        class="flex items-center justify-center gap-2 py-3 rounded-xl
-                  bg-gray-800 hover:bg-gray-700 transition font-semibold">
-                        ← Back
-                    </a>
+                {{-- BACK --}}
+                <a href="{{ url()->previous() }}"
+                    class="flex items-center justify-center gap-2 py-3 rounded-xl
+              bg-gray-800 hover:bg-gray-700 transition font-semibold">
+                    ← Back
+                </a>
 
-                    <form action="{{ route('user.pemesanan.store') }}" method="POST">
-                        @csrf
-                        <input type="hidden" id="seatInput" name="seats">
-                        <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
 
-                        <button
-                            class="w-full bg-blue-600 hover:bg-blue-700 transition
+                <form action="{{ route('user.pemesanan.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" id="seatInput" name="seats">
+                    <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
+
+                    <button
+                        class="w-full bg-blue-600 hover:bg-blue-700 transition
                        py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
-                            Pay Now
-                        </button>
-                    </form>
-                </div>
+                        Pay Now
+                    </button>
+                </form>
             </div>
+        </div>
 
 
-            <script>
-                const seatPrice = 14;
-                const bookingFee = 2;
-                let selected = [];
+        <script>
+            const seatPrice = 14;
+            const bookingFee = 2;
+            let selected = [];
 
-                const seatList = document.getElementById('seatList');
-                const seatInput = document.getElementById('seatInput');
-                const ticketCount = document.getElementById('ticketCount');
-                const ticketTotal = document.getElementById('ticketTotal');
-                const grandTotal = document.getElementById('grandTotal');
+            const seatList = document.getElementById('seatList');
+            const seatInput = document.getElementById('seatInput');
+            const ticketCount = document.getElementById('ticketCount');
+            const ticketTotal = document.getElementById('ticketTotal');
+            const grandTotal = document.getElementById('grandTotal');
 
-                function removeSeat(seat) {
-                    selected = selected.filter(s => s !== seat);
+            function removeSeat(seat) {
+                selected = selected.filter(s => s !== seat);
 
-                    const btn = document.querySelector(`[data-seat="${seat}"]`);
-                    if (btn) {
-                        btn.classList.remove('bg-blue-600', 'text-white');
-                        btn.classList.add('border', 'border-blue-500', 'text-blue-400');
-                    }
-
-                    renderSummary();
+                const btn = document.querySelector(`[data-seat="${seat}"]`);
+                if (btn) {
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('border', 'border-blue-500', 'text-blue-400');
                 }
 
-                function renderSummary() {
-                    seatList.innerHTML = '';
+                renderSummary();
+            }
 
-                    if (selected.length === 0) {
-                        seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
-                    } else {
-                        selected.forEach(seat => {
-                            seatList.innerHTML += `
+            function renderSummary() {
+                seatList.innerHTML = '';
+
+                if (selected.length === 0) {
+                    seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
+                } else {
+                    selected.forEach(seat => {
+                        seatList.innerHTML += `
                     <div class="flex items-center justify-between
                                 bg-[#0B1220] rounded-xl px-4 py-3 border border-gray-700">
 
@@ -188,28 +188,28 @@
                         </div>
                     </div>
                 `;
-                        });
-                    }
-
-                    ticketCount.innerText = selected.length;
-                    ticketTotal.innerText = (selected.length * seatPrice).toFixed(2);
-                    grandTotal.innerText = (selected.length * seatPrice + bookingFee).toFixed(2);
-                    seatInput.value = selected.join(',');
+                    });
                 }
 
-                document.querySelectorAll('.seat').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const seat = this.dataset.seat;
+                ticketCount.innerText = selected.length;
+                ticketTotal.innerText = (selected.length * seatPrice).toFixed(2);
+                grandTotal.innerText = (selected.length * seatPrice + bookingFee).toFixed(2);
+                seatInput.value = selected.join(',');
+            }
 
-                        if (selected.includes(seat)) {
-                            removeSeat(seat);
-                        } else {
-                            selected.push(seat);
-                            this.classList.remove('border', 'border-blue-500', 'text-blue-400');
-                            this.classList.add('bg-blue-600', 'text-white');
-                            renderSummary();
-                        }
-                    });
+            document.querySelectorAll('.seat').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const seat = this.dataset.seat;
+
+                    if (selected.includes(seat)) {
+                        removeSeat(seat);
+                    } else {
+                        selected.push(seat);
+                        this.classList.remove('border', 'border-blue-500', 'text-blue-400');
+                        this.classList.add('bg-blue-600', 'text-white');
+                        renderSummary();
+                    }
                 });
-            </script>
-        @endsection
+            });
+        </script>
+    @endsection
