@@ -1,180 +1,168 @@
 @extends('layouts.landing')
 
 @section('content')
-    <div class="max-w-6xl mx-auto px-4 py-10 text-white">
+<div class="max-w-6xl mx-auto px-4 py-10 text-white">
 
-        {{-- ======================
-        HEADER
-    ====================== --}}
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold">
-                {{ $jadwal->film->judul }}
-            </h1>
-            <p class="text-sm text-gray-400">
-                {{ $jadwal->film->genre->nama }} •
-                Studio {{ $jadwal->studio->nama }} •
-                {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-            {{-- ======================
-            SEAT MAP
-        ====================== --}}
-            <div class="lg:col-span-2 bg-[#0B1220] rounded-2xl p-6">
-
-                {{-- LEGEND --}}
-                <div class="flex justify-center flex-wrap gap-6 text-sm mb-6">
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 border border-blue-500 rounded-md"></span>
-                        <span>Tersedia</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 bg-blue-600 opacity-60 rounded-md"></span>
-                        <span>Sudah dipesan</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 bg-blue-600 rounded-md"></span>
-                        <span>Dipilih</span>
-                    </div>
-                </div>
-
-                {{-- SCREEN --}}
-                <div class="relative text-center mb-10">
-                    <div class="h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-2"></div>
-                    <p class="tracking-widest text-gray-400 text-sm">SCREEN</p>
-                </div>
-
-                {{-- ======================
-                SEATS
-            ====================== --}}
-                @php
-                    $groupedSeats = $kursi
-                        ->groupBy(fn($item) => substr($item->nomor_kursi, 0, 1))
-                        ->map(fn($seats) => $seats->sortBy(fn($seat) => intval(substr($seat->nomor_kursi, 1))));
-                @endphp
-
-                <div class="space-y-4">
-                    @foreach ($groupedSeats as $row => $seats)
-                        <div class="grid grid-cols-11 gap-3 justify-center mx-auto w-fit">
-                            @foreach ($seats->values() as $index => $item)
-                                {{-- LORONG --}}
-                                @if ($seats->count() === 10 && $index === 5)
-                                    <div></div>
-                                @endif
-
-                                <button type="button"
-                                    class="seat w-10 py-2 text-sm rounded-md
-                                       border border-blue-500 text-blue-400
-                                       hover:bg-blue-600 hover:text-white transition"
-                                    data-seat="{{ $item->nomor_kursi }}">
-                                    {{ $item->nomor_kursi }}
-                                </button>
-                            @endforeach
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- ======================
-            SUMMARY
-        ====================== --}}
-            <div class="bg-[#111827] rounded-2xl p-6 h-fit">
-
-                <h3 class="text-lg font-semibold mb-1">Selected Seats</h3>
-                <p class="text-sm text-gray-400 mb-4">
-                    {{ $jadwal->film->judul }} • {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
-                </p>
-
-                {{-- LIST --}}
-                <div id="seatList" class="space-y-3 mb-6">
-                    <p class="text-gray-500 text-sm">No seat selected</p>
-                </div>
-
-                {{-- PRICE --}}
-                <div class="border-t border-gray-700 pt-4 space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">
-                            Tickets (<span id="ticketCount">0</span>)
-                        </span>
-                        <span>$<span id="ticketTotal">0.00</span></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">Booking Fee</span>
-                        <span>$2.00</span>
-                    </div>
-                </div>
-
-                {{-- TOTAL --}}
-                <div class="flex justify-between items-center mt-4 text-lg font-semibold">
-                    <span>Total</span>
-                    <span class="text-blue-500">$<span id="grandTotal">0.00</span></span>
-                </div>
-
-                {{-- FORM --}}
-                <form action="{{ route('user.pemesanan.store') }}" method="POST" class="mt-6">
-                    @csrf
-                    <input type="hidden" id="seatInput" name="seats">
-                    <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
-
-                    <div class="flex gap-3">
-                        {{-- BACK --}}
-                        <a href="{{ url()->previous() }}"
-                            class="flex-1 flex items-center justify-center
-                               py-3 rounded-xl bg-gray-800
-                               hover:bg-gray-700 transition font-semibold">
-                            ← Back
-                        </a>
-
-                        {{-- PAY --}}
-                        <button
-                            class="flex-1 bg-blue-600 hover:bg-blue-700 transition
-                               py-3 rounded-xl font-semibold
-                               flex items-center justify-center gap-2">
-                            Pay Now
-                        </button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
+    {{-- HEADER --}}
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold">
+            {{ $jadwal->film->judul }}
+        </h1>
+        <p class="text-sm text-gray-400">
+            {{ $jadwal->film->genre->nama }} •
+            Studio {{ $jadwal->studio->nama }} •
+            {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
+        </p>
     </div>
 
-    {{-- ======================
-    SCRIPT
-====================== --}}
-    <script>
-        const seatPrice = 14;
-        const bookingFee = 2;
-        let selected = [];
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        const seatList = document.getElementById('seatList');
-        const seatInput = document.getElementById('seatInput');
-        const ticketCount = document.getElementById('ticketCount');
-        const ticketTotal = document.getElementById('ticketTotal');
-        const grandTotal = document.getElementById('grandTotal');
+        {{-- SEAT MAP --}}
+        <div class="lg:col-span-2 bg-[#0B1220] rounded-2xl p-6">
 
-        function removeSeat(seat) {
-            selected = selected.filter(s => s !== seat);
+            {{-- LEGEND --}}
+            <div class="flex justify-center flex-wrap gap-6 text-sm mb-6">
+                <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 border border-blue-500 rounded-md"></span>
+                    <span>Tersedia</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 bg-blue-600 opacity-60 rounded-md"></span>
+                    <span>Sudah dipesan</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 bg-blue-600 rounded-md"></span>
+                    <span>Dipilih</span>
+                </div>
+            </div>
 
-            const btn = document.querySelector(`[data-seat="${seat}"]`);
-            if (btn) {
-                btn.classList.remove('bg-blue-600', 'text-white');
-                btn.classList.add('border', 'border-blue-500', 'text-blue-400');
-            }
+            {{-- SCREEN --}}
+            <div class="relative text-center mb-10">
+                <div class="h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-2"></div>
+                <p class="tracking-widest text-gray-400 text-sm">SCREEN</p>
+            </div>
 
-            renderSummary();
+            {{-- SEATS --}}
+            @php
+                $groupedSeats = $kursi
+                    ->groupBy(fn ($item) => substr($item->nomor_kursi, 0, 1))
+                    ->map(fn ($seats) =>
+                        $seats->sortBy(fn ($seat) => intval(substr($seat->nomor_kursi, 1)))
+                    );
+            @endphp
+
+            <div class="space-y-4">
+                @foreach ($groupedSeats as $row => $seats)
+                    <div class="grid grid-cols-11 gap-3 justify-center mx-auto w-fit">
+                        @foreach ($seats->values() as $index => $item)
+
+                            @if ($seats->count() === 10 && $index === 5)
+                                <div></div>
+                            @endif
+
+                            <button type="button"
+                                class="seat w-10 py-2 text-sm rounded-md
+                                       border border-blue-500 text-blue-400
+                                       hover:bg-blue-600 hover:text-white transition"
+                                data-seat="{{ $item->nomor_kursi }}">
+                                {{ $item->nomor_kursi }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- SUMMARY --}}
+        <div class="bg-[#111827] rounded-2xl p-6 h-fit">
+
+            <h3 class="text-lg font-semibold mb-1">Selected Seats</h3>
+            <p class="text-sm text-gray-400 mb-4">
+                {{ $jadwal->film->judul }} • {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
+            </p>
+
+            <div id="seatList" class="space-y-3 mb-6">
+                <p class="text-gray-500 text-sm">No seat selected</p>
+            </div>
+
+            {{-- PRICE --}}
+            <div class="border-t border-gray-700 pt-4 space-y-2 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">
+                        Tickets (<span id="ticketCount">0</span>)
+                    </span>
+                    <span id="ticketTotal">Rp 0</span>
+                </div>
+            </div>
+
+            {{-- TOTAL --}}
+            <div class="flex justify-between items-center mt-4 text-lg font-semibold">
+                <span>Total</span>
+                <span class="text-blue-500" id="grandTotal">Rp 0</span>
+            </div>
+
+            {{-- FORM --}}
+            <form action="{{ route('user.pemesanan.store') }}" method="POST" class="mt-6">
+                @csrf
+                <input type="hidden" id="seatInput" name="seats">
+                <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
+
+                <div class="flex gap-3">
+                    <a href="{{ url()->previous() }}"
+                       class="flex-1 flex items-center justify-center
+                              py-3 rounded-xl bg-gray-800
+                              hover:bg-gray-700 transition font-semibold">
+                        ← Back
+                    </a>
+
+                    <button
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 transition
+                               py-3 rounded-xl font-semibold">
+                        Pay Now
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{{-- SCRIPT --}}
+<script>
+    // HARGA DARI DATABASE
+    const seatPrice = {{ $jadwal->harga }};
+    let selected = [];
+
+    const seatList = document.getElementById('seatList');
+    const seatInput = document.getElementById('seatInput');
+    const ticketCount = document.getElementById('ticketCount');
+    const ticketTotal = document.getElementById('ticketTotal');
+    const grandTotal = document.getElementById('grandTotal');
+
+    const rupiah = (angka) => {
+        return 'Rp ' + angka.toLocaleString('id-ID');
+    };
+
+    function removeSeat(seat) {
+        selected = selected.filter(s => s !== seat);
+
+        const btn = document.querySelector(`[data-seat="${seat}"]`);
+        if (btn) {
+            btn.classList.remove('bg-blue-600', 'text-white');
+            btn.classList.add('border', 'border-blue-500', 'text-blue-400');
         }
 
-        function renderSummary() {
-            seatList.innerHTML = '';
+        renderSummary();
+    }
 
-            if (selected.length === 0) {
-                seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
-            } else {
-                selected.forEach(seat => {
-                    seatList.innerHTML += `
+    function renderSummary() {
+        seatList.innerHTML = '';
+
+        if (selected.length === 0) {
+            seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
+        } else {
+            selected.forEach(seat => {
+                seatList.innerHTML += `
                 <div class="flex items-center justify-between
                             bg-[#0B1220] rounded-xl px-4 py-3 border border-gray-700">
 
@@ -196,35 +184,35 @@
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <span class="font-semibold">$${seatPrice.toFixed(2)}</span>
+                        <span class="font-semibold">${rupiah(seatPrice)}</span>
                         <button onclick="removeSeat('${seat}')"
                                 class="text-gray-400 hover:text-red-500 text-xl">
                             ×
                         </button>
                     </div>
                 </div>`;
-                });
-            }
-
-            ticketCount.innerText = selected.length;
-            ticketTotal.innerText = (selected.length * seatPrice).toFixed(2);
-            grandTotal.innerText = (selected.length * seatPrice + bookingFee).toFixed(2);
-            seatInput.value = selected.join(',');
+            });
         }
 
-        document.querySelectorAll('.seat').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const seat = this.dataset.seat;
+        ticketCount.innerText = selected.length;
+        ticketTotal.innerText = rupiah(selected.length * seatPrice);
+        grandTotal.innerText = rupiah(selected.length * seatPrice);
+        seatInput.value = selected.join(',');
+    }
 
-                if (selected.includes(seat)) {
-                    removeSeat(seat);
-                } else {
-                    selected.push(seat);
-                    this.classList.remove('border', 'border-blue-500', 'text-blue-400');
-                    this.classList.add('bg-blue-600', 'text-white');
-                    renderSummary();
-                }
-            });
+    document.querySelectorAll('.seat').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const seat = this.dataset.seat;
+
+            if (selected.includes(seat)) {
+                removeSeat(seat);
+            } else {
+                selected.push(seat);
+                this.classList.remove('border', 'border-blue-500', 'text-blue-400');
+                this.classList.add('bg-blue-600', 'text-white');
+                renderSummary();
+            }
         });
-    </script>
+    });
+</script>
 @endsection
