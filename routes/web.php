@@ -44,12 +44,17 @@ Route::prefix('user')
             ->name('dashboard');
 
         // =============================
+        // PILIH KURSI
+        // =============================
+        Route::get('kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])
+            ->name('kursi.index');
+
+        // =============================
         // PEMESANAN
         // =============================
         Route::resource('pemesanan', PemesananController::class)
             ->only(['store', 'index', 'show']);
 
-        // HALAMAN PEMBAYARAN
         Route::get('pemesanan/{pemesanan}/payment', [PemesananController::class, 'payment'])
             ->name('pemesanan.payment');
 
