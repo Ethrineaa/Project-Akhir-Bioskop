@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\User\FilmController as UserFilmController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\PemesananController;
+use App\Http\Controllers\User\PembayaranController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,17 +39,14 @@ Route::prefix('user')
     ->name('user.')
     ->middleware(['auth', 'role:user'])
     ->group(function () {
+        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('/dashboard', [UserDashboardController::class, 'index'])
-            ->name('dashboard');
+        Route::resource('pemesanan', PemesananController::class)->only(['store', 'index', 'show']);
 
-        Route::resource('pemesanan', PemesananController::class)
-            ->only(['store', 'index', 'show']);
+        Route::get('/user/pemesanan/{pemesanan}/payment', [PemesananController::class, 'payment'])->name('user.pemesanan.payment');
 
-        Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])
-            ->name('pemesanan.kursi');
+        Route::post('/user/pembayaran/{pembayaran}', [PembayaranController::class, 'store'])->name('user.pembayaran.store');
     });
-
 
 /*
 |--------------------------------------------------------------------------
