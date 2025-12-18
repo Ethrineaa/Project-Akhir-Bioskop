@@ -179,7 +179,6 @@
 
                     <div>
                         <p class="font-medium">Seat ${seat}</p>
-                        <p class="text-xs text-gray-400">Standard</p>
                     </div>
                 </div>
 
