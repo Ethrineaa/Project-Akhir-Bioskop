@@ -6,12 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pemesanan extends Model
 {
-    protected $fillable = [
-        'jadwal_id',
-        'user_id',
-        'jumlah_tiket',
-        'total_harga'
-    ];
+    protected $table = 'pemesanans';
+    protected $fillable = ['jadwal_id', 'user_id', 'jumlah_tiket', 'total_harga'];
 
     public function jadwal()
     {
