@@ -39,13 +39,25 @@ Route::prefix('user')
     ->name('user.')
     ->middleware(['auth', 'role:user'])
     ->group(function () {
-        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 
-        Route::resource('pemesanan', PemesananController::class)->only(['store', 'index', 'show']);
+        Route::get('/dashboard', [UserDashboardController::class, 'index'])
+            ->name('dashboard');
 
-        Route::get('/user/pemesanan/{pemesanan}/payment', [PemesananController::class, 'payment'])->name('user.pemesanan.payment');
+        // =============================
+        // PEMESANAN
+        // =============================
+        Route::resource('pemesanan', PemesananController::class)
+            ->only(['store', 'index', 'show']);
 
-        Route::post('/user/pembayaran/{pembayaran}', [PembayaranController::class, 'store'])->name('user.pembayaran.store');
+        // HALAMAN PEMBAYARAN
+        Route::get('pemesanan/{pemesanan}/payment', [PemesananController::class, 'payment'])
+            ->name('pemesanan.payment');
+
+        // =============================
+        // PEMBAYARAN
+        // =============================
+        Route::post('pembayaran/{pembayaran}', [PembayaranController::class, 'store'])
+            ->name('pembayaran.store');
     });
 
 /*
