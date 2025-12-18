@@ -22,4 +22,9 @@ class Pemesanan extends Model
     {
         return $this->belongsToMany(Kursi::class, 'kursi_pemesanan', 'pemesanan_id', 'kursi_id');
     }
+
+    public function pembayaran()
+    {
+        return $this->hasOne(Pembayaran::class);
+    }
 }

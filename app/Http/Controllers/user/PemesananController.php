@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Jadwal;
 use App\Models\Kursi;
 use App\Models\Pemesanan;
+use App\Models\Pembayaran;
 
 class PemesananController extends Controller
 {
@@ -18,6 +19,9 @@ class PemesananController extends Controller
         $jadwal = Jadwal::with('film', 'studio')->findOrFail($jadwal_id);
 
         $kursi = Kursi::where('studio_id', $jadwal->studio_id)
+            ->whereDoesntHave('pemesanans', function ($q) use ($jadwal) {
+                $q->where('jadwal_id', $jadwal->id);
+            })
             ->orderBy('nomor_kursi')
             ->get();
 
@@ -32,69 +36,61 @@ class PemesananController extends Controller
             'seats' => 'required|string'
         ]);
 
-        $selectedSeats = array_filter(array_map('trim', explode(',', $request->seats)));
+        $seats = array_map('intval', explode(',', $request->seats));
+        $jumlahTiket = count($seats);
 
-        if (count($selectedSeats) === 0) {
-            return back()->with('error', 'Pilih minimal satu kursi.');
+        if ($jumlahTiket == 0) {
+            return back()->withErrors(['seats' => 'Pilih setidaknya satu kursi.']);
         }
 
-        DB::beginTransaction();
+        $jadwal = Jadwal::with('film')->findOrFail($request->jadwal_id);
 
-        try {
-            // Ambil data kursi berdasarkan nomor_kursi
-            $kursi = Kursi::whereIn('nomor_kursi', $selectedSeats)
-                ->where('studio_id', function ($q) use ($request) {
-                    $q->select('studio_id')->from('jadwals')
-                        ->where('id', $request->jadwal_id)->limit(1);
-                })
-                ->get();
+        // Validasi kursi milik studio
+        $validSeats = Kursi::whereIn('id', $seats)
+            ->where('studio_id', $jadwal->studio_id)
+            ->pluck('id')
+            ->toArray();
 
-            if ($kursi->count() != count($selectedSeats)) {
-                DB::rollBack();
-                return back()->with('error', 'Kursi tidak valid atau tidak ditemukan.');
-            }
+        if (count($validSeats) != $jumlahTiket) {
+            return back()->withErrors(['seats' => 'Kursi tidak valid untuk studio ini.']);
+        }
 
-            // Cek jika kursi sudah pernah dipesan di jadwal tersebut
-            $sudahDipesan = DB::table('kursi_pemesanan')
-                ->join('pemesanans', 'kursi_pemesanan.pemesanan_id', '=', 'pemesanans.id')
-                ->where('pemesanans.jadwal_id', $request->jadwal_id)
-                ->whereIn('kursi_pemesanan.kursi_id', $kursi->pluck('id'))
-                ->exists();
+        // Cek ketersediaan kursi
+        $bookedSeats = Pemesanan::where('jadwal_id', $jadwal->id)
+            ->whereHas('kursis', function ($q) use ($seats) {
+                $q->whereIn('kursi_id', $seats);
+            })
+            ->exists();
 
-            if ($sudahDipesan) {
-                DB::rollBack();
-                return back()->with('error', 'Salah satu kursi sudah terpesan.');
-            }
+        if ($bookedSeats) {
+            return back()->withErrors(['seats' => 'Beberapa kursi sudah dipesan.']);
+        }
 
-            // Harga satu kursi (contoh)
-            $hargaPerKursi = 50000;
+        $totalHarga = $jumlahTiket * $jadwal->film->harga;
 
-            // Buat pemesanan
+        $pemesanan = DB::transaction(function () use ($jadwal, $seats, $jumlahTiket, $totalHarga) {
+            // 🔒 Simpan pemesanan
             $pemesanan = Pemesanan::create([
-                'jadwal_id' => $request->jadwal_id,
-                'user_id' => Auth::id(),
-                'jumlah_tiket' => count($selectedSeats),
-                'total_harga' => count($selectedSeats) * $hargaPerKursi,
+                'jadwal_id'     => $jadwal->id,
+                'user_id'       => Auth::id(),
+                'jumlah_tiket'  => $jumlahTiket,
+                'total_harga'   => $totalHarga,
             ]);
 
-            // Insert ke pivot kursi_pemesanan
-            foreach ($kursi as $k) {
-                DB::table('kursi_pemesanan')->insert([
-                    'pemesanan_id' => $pemesanan->id,
-                    'kursi_id' => $k->id,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-            }
+            // Hubungkan kursi
+            $pemesanan->kursis()->attach($seats);
 
-            DB::commit();
+            // 💳 Auto buat pembayaran
+            Pembayaran::create([
+                'pemesanan_id' => $pemesanan->id,
+                'status' => 'waiting'
+            ]);
 
-            return redirect()->route('user.pemesanan.show', $pemesanan->id)
-                ->with('success', 'Pemesanan berhasil!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', $e->getMessage());
-        }
+            return $pemesanan;
+        });
+
+        // ➡️ Redirect ke halaman pembayaran
+        return redirect()->route('user.pemesanan.show', $pemesanan->id);
     }
 
     public function index()
@@ -110,7 +106,8 @@ class PemesananController extends Controller
     {
         $pemesanan = Pemesanan::with([
             'jadwal.film',
-            'kursis'
+            'kursis',
+            'pembayaran'
         ])
             ->where('user_id', Auth::id())
             ->findOrFail($id);
