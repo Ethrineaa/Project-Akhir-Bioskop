@@ -125,6 +125,3 @@
         </div>
     </div>
 @endsection
-dwdnwdniasnidanidnaid
-sldmlsdmsmdasmdlsamdlsd
-sd,sdsamdsmdksamdkasdksmdkadkaskd
