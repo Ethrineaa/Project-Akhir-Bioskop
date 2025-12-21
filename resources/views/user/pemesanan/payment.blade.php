@@ -125,8 +125,3 @@
         </div>
     </div>
 @endsection
-
-
-andakdnkaandkasndkand
-sdnskndkasndknslkd
-adnasndlkandlkasndklas
