@@ -129,6 +129,4 @@
 nqwidniowndoiqnd
 doasdiasndionasodnasoidnaoidnnd
 daopdopasdasndadnas
-dmaslasmdlkndlkandnqndinqwdl,d
-ssmdlmldmasldmal;dma;dmald
-dasldmlamdlasmdl;asmdlamd
+
