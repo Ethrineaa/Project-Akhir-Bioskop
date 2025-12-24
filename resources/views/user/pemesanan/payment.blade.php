@@ -17,24 +17,6 @@
                 <div class="bg-[#0B1220] rounded-xl p-4">
                     <h4 class="font-semibold mb-3">Voucher & Promo</h4>
 
-                    <div
-                        class="flex justify-between items-center bg-gray-800 rounded-lg p-3 mb-3 hover:bg-gray-700 cursor-pointer">
-                        <div>
-                            <p class="font-medium">Gunakan Kode Voucher</p>
-                            <p class="text-sm text-gray-400">Voucher tersedia</p>
-                        </div>
-                        <span>›</span>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-gray-800 rounded-lg p-3">
-                        <div>
-                            <p class="font-medium">Gunakan Poin</p>
-                            <p class="text-sm text-gray-400">0 Poin</p>
-                        </div>
-                        <input type="checkbox" class="accent-blue-500">
-                    </div>
-                </div>
-
                 {{-- PAYMENT METHOD --}}
                 <div class="bg-[#0B1220] rounded-xl p-4">
                     <h4 class="font-semibold mb-4">Pilih Metode Pembayaran</h4>
@@ -125,4 +107,4 @@
         </div>
     </div>
 @endsection
-nsknkaskdnaskndd
+
