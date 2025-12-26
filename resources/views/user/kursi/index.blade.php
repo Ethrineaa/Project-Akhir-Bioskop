@@ -37,7 +37,7 @@
                             @foreach ($seats as $item)
                                 <button type="button"
                                     class="seat w-8 h-8 rounded-md bg-gray-700
-                                       hover:bg-blue-600 transition text-xs"
+                                        hover:bg-blue-600 transition text-xs"
                                     data-seat="{{ $item->nomor_kursi }}">
                                 </button>
                             @endforeach
@@ -87,3 +87,4 @@
         </div>
 
     </div>
+@endsection
