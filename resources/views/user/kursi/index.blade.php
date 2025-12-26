@@ -1,220 +1,89 @@
 @extends('layouts.landing')
 
 @section('content')
-    <div class="max-w-6xl mx-auto px-4 py-10 text-white">
+<div class="max-w-5xl mx-auto px-4 py-10 text-white">
 
-        {{-- HEADER --}}
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold">
-                {{ $jadwal->film->judul }}
-            </h1>
-            <p class="text-sm text-gray-400">
-                {{ $jadwal->film->genre->nama }} •
-                Studio {{ $jadwal->studio->nama }} •
-                {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
-            </p>
+    {{-- HEADER --}}
+    <div class="mb-8">
+        <h1 class="text-2xl font-semibold">{{ $jadwal->film->judul }}</h1>
+        <p class="text-sm text-gray-400">
+            {{ $jadwal->film->genre->nama }} • Studio {{ $jadwal->studio->nama }} •
+            {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
+        </p>
+    </div>
+
+    {{-- SEAT CONTAINER --}}
+    <div class="bg-[#0B1220] rounded-2xl p-8">
+
+        {{-- SCREEN --}}
+        <div class="flex flex-col items-center mb-10">
+            <div class="w-72 h-2 bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full mb-2"></div>
+            <p class="text-xs tracking-widest text-gray-400">SCREEN</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {{-- SEATS --}}
+        @php
+            $groupedSeats = $kursi
+                ->groupBy(fn($item) => substr($item->nomor_kursi, 0, 1))
+                ->map(fn($seats) => $seats->sortBy(fn($seat) => intval(substr($seat->nomor_kursi, 1))));
+        @endphp
 
-            {{-- SEAT MAP --}}
-            <div class="lg:col-span-2 bg-[#0B1220] rounded-2xl p-6">
+        <div class="space-y-4 flex flex-col items-center">
+            @foreach ($groupedSeats as $row => $seats)
+                <div class="flex items-center gap-3">
+                    <span class="w-4 text-gray-500 text-sm">{{ $row }}</span>
 
-                {{-- LEGEND --}}
-                <div class="flex justify-center flex-wrap gap-6 text-sm mb-6">
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 border border-blue-500 rounded-md"></span>
-                        <span>Tersedia</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 bg-blue-600 opacity-60 rounded-md"></span>
-                        <span>Sudah dipesan</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 bg-blue-600 rounded-md"></span>
-                        <span>Dipilih</span>
+                    <div class="grid grid-cols-{{ $seats->count() }} gap-3">
+                        @foreach ($seats as $item)
+                            <button type="button"
+                                class="seat w-8 h-8 rounded-md bg-gray-700
+                                       hover:bg-blue-600 transition text-xs"
+                                data-seat="{{ $item->nomor_kursi }}">
+                            </button>
+                        @endforeach
                     </div>
                 </div>
+            @endforeach
+        </div>
 
-                {{-- SCREEN --}}
-                <div class="relative text-center mb-10">
-                    <div class="h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent mb-2"></div>
-                    <p class="tracking-widest text-gray-400 text-sm">SCREEN</p>
-                </div>
-
-                {{-- SEATS --}}
-                @php
-                    $groupedSeats = $kursi
-                        ->groupBy(fn($item) => substr($item->nomor_kursi, 0, 1))
-                        ->map(fn($seats) => $seats->sortBy(fn($seat) => intval(substr($seat->nomor_kursi, 1))));
-                @endphp
-
-                <div class="space-y-4">
-                    @foreach ($groupedSeats as $row => $seats)
-                        <div class="grid grid-cols-11 gap-3 justify-center mx-auto w-fit">
-                            @foreach ($seats->values() as $index => $item)
-                                @if ($seats->count() === 10 && $index === 5)
-                                    <div></div>
-                                @endif
-
-                                <button type="button"
-                                    class="seat w-10 py-2 text-sm rounded-md
-                                       border border-blue-500 text-blue-400
-                                       hover:bg-blue-600 hover:text-white transition"
-                                    data-seat="{{ $item->nomor_kursi }}">
-                                    {{ $item->nomor_kursi }}
-                                </button>
-                            @endforeach
-                        </div>
-                    @endforeach
-                </div>
+        {{-- LEGEND --}}
+        <div class="flex justify-center gap-6 text-xs mt-10 text-gray-400">
+            <div class="flex items-center gap-2">
+                <span class="w-4 h-4 bg-gray-700 rounded"></span> Available
             </div>
-
-            {{-- SUMMARY --}}
-            <div class="bg-[#111827] rounded-2xl p-6 h-fit">
-
-                <h3 class="text-lg font-semibold mb-1">Selected Seats</h3>
-                <p class="text-sm text-gray-400 mb-4">
-                    {{ $jadwal->film->judul }} • {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
-                </p>
-
-                <div id="seatList" class="space-y-3 mb-6">
-                    <p class="text-gray-500 text-sm">No seat selected</p>
-                </div>
-
-                {{-- PRICE --}}
-                <div class="border-t border-gray-700 pt-4 space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">
-                            Tickets (<span id="ticketCount">0</span>)
-                        </span>
-                        <span id="ticketTotal">Rp 0</span>
-                    </div>
-                </div>
-
-                {{-- TOTAL --}}
-                <div class="flex justify-between items-center mt-4 text-lg font-semibold">
-                    <span>Total</span>
-                    <span class="text-blue-500" id="grandTotal">Rp 0</span>
-                </div>
-
-                {{-- FORM --}}
-                <form action="{{ route('user.pemesanan.store') }}" method="POST" class="mt-6">
-                    @csrf
-                    <input type="hidden" id="seatInput" name="seats">
-                    <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
-
-                    <div class="flex gap-3">
-                        <a href="{{ url()->previous() }}"
-                            class="flex-1 flex items-center justify-center
-                              py-3 rounded-xl bg-gray-800
-                              hover:bg-gray-700 transition font-semibold">
-                            ← Back
-                        </a>
-
-                        <button
-                            class="flex-1 bg-blue-600 hover:bg-blue-700 transition
-                               py-3 rounded-xl font-semibold">
-                            Pay Now
-                        </button>
-                    </div>
-                </form>
-
+            <div class="flex items-center gap-2">
+                <span class="w-4 h-4 bg-blue-600 rounded"></span> Selected
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-4 h-4 bg-gray-500 rounded opacity-40"></span> Booked
             </div>
         </div>
     </div>
 
-   <script>
-    const seatPrice = {{ $jadwal->film->harga }};
-    let selected = [];
+    {{-- BOTTOM SUMMARY --}}
+    <div class="mt-8 bg-[#0F172A] rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
 
-    const seatList = document.getElementById('seatList');
-    const seatInput = document.getElementById('seatInput');
-    const ticketCount = document.getElementById('ticketCount');
-    const ticketTotal = document.getElementById('ticketTotal');
-    const grandTotal = document.getElementById('grandTotal');
+        <div>
+            <p class="text-sm text-gray-400">Selected Seats</p>
+            <p id="seatList" class="font-medium">None</p>
+        </div>
 
-    const rupiah = (angka) => {
-        return 'Rp ' + angka.toLocaleString('id-ID');
-    };
+        <div class="flex items-center gap-6">
+            <div>
+                <p class="text-xs text-gray-400">Total</p>
+                <p class="text-lg font-semibold text-blue-500" id="grandTotal">Rp 0</p>
+            </div>
 
-    function removeSeat(seat) {
-        selected = selected.filter(s => s !== seat);
+            <form action="{{ route('user.pemesanan.store') }}" method="POST">
+                @csrf
+                <input type="hidden" id="seatInput" name="seats">
+                <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
 
-        const btn = document.querySelector(`[data-seat="${seat}"]`);
-        if (btn) {
-            btn.classList.remove('bg-blue-600', 'text-white');
-            btn.classList.add('border', 'border-blue-500', 'text-blue-400');
-        }
+                <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-semibold">
+                    Buy Tickets →
+                </button>
+            </form>
+        </div>
+    </div>
 
-        renderSummary();
-    }
-
-    function renderSummary() {
-        seatList.innerHTML = '';
-
-        if (selected.length === 0) {
-            seatList.innerHTML = `<p class="text-gray-500 text-sm">No seat selected</p>`;
-            ticketCount.innerText = 0;
-            ticketTotal.innerText = rupiah(0);
-            grandTotal.innerText = rupiah(0);
-            return;
-        }
-
-        selected.forEach(seat => {
-            seatList.innerHTML += `
-            <div class="flex items-center justify-between
-                        bg-[#0B1220] rounded-xl px-4 py-3 border border-gray-700">
-
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 flex items-center justify-center
-                                rounded-lg bg-blue-600/20 border border-blue-500">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             class="w-6 h-6 text-blue-400"
-                             fill="currentColor"
-                             viewBox="0 0 24 24">
-                            <path d="M7 13v-2a3 3 0 0 1 6 0v2h3a1 1 0 0 1 1 1v5h-2v-3H9v3H7v-5a1 1 0 0 1 1-1h-1z"/>
-                        </svg>
-                    </div>
-
-                    <div>
-                        <p class="font-medium">Seat ${seat}</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <span class="font-semibold">${rupiah(seatPrice)}</span>
-                    <button type="button"
-                            onclick="removeSeat('${seat}')"
-                            class="text-gray-400 hover:text-red-500 text-xl">
-                        ×
-                    </button>
-                </div>
-            </div>`;
-        });
-
-        ticketCount.innerText = selected.length;
-        ticketTotal.innerText = rupiah(selected.length * seatPrice);
-        grandTotal.innerText = rupiah(selected.length * seatPrice);
-        seatInput.value = selected.join(',');
-    }
-
-    document.querySelectorAll('.seat').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault(); // 🔥 INI KUNCI UTAMA
-
-            const seat = this.dataset.seat;
-
-            if (selected.includes(seat)) {
-                removeSeat(seat);
-            } else {
-                selected.push(seat);
-                this.classList.remove('border', 'border-blue-500', 'text-blue-400');
-                this.classList.add('bg-blue-600', 'text-white');
-                renderSummary();
-            }
-        });
-    });
-</script>
-
-@endsection
+</div>
