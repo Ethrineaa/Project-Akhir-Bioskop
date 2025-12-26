@@ -107,8 +107,3 @@
         </div>
     </div>
 @endsection
-
-jnbi
-hiiu
-
-kmmmomomoomom

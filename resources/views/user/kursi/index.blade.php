@@ -23,6 +23,9 @@
 
             {{-- SEATS --}}
             @php
+                // CONTOH DATA BOOKED (ganti dari DB)
+                $bookedSeats = $bookedSeats ?? ['A1', 'B3', 'C5'];
+
                 $groupedSeats = $kursi
                     ->groupBy(fn($item) => substr($item->nomor_kursi, 0, 1))
                     ->map(fn($seats) => $seats->sortBy(fn($seat) => intval(substr($seat->nomor_kursi, 1))));
@@ -33,12 +36,26 @@
                     <div class="flex items-center gap-3">
                         <span class="w-4 text-gray-500 text-sm">{{ $row }}</span>
 
-                        <div class="grid grid-cols-{{ $seats->count() }} gap-3">
-                            @foreach ($seats as $item)
-                                <button type="button"
-                                    class="seat w-8 h-8 rounded-md bg-gray-700
-                                        hover:bg-blue-600 transition text-xs"
-                                    data-seat="{{ $item->nomor_kursi }}">
+                        <div class="flex items-center gap-3">
+                            @foreach ($seats->values() as $index => $item)
+                                {{-- GAP SETIAP 5 KURSI --}}
+                                @if ($index === 5)
+                                    <div class="w-6"></div>
+                                @endif
+
+                                @php
+                                    $isBooked = in_array($item->nomor_kursi, $bookedSeats);
+                                @endphp
+
+                                <button type="button" title="{{ $item->nomor_kursi }}" data-seat="{{ $item->nomor_kursi }}"
+                                    @class([
+                                        'seat w-8 h-8 rounded-md text-[10px] font-medium transition flex items-center justify-center',
+                                        'bg-gray-700 hover:bg-blue-600 cursor-pointer' => !$isBooked,
+                                        'bg-gray-500 opacity-40 cursor-not-allowed' => $isBooked,
+                                    ]) {{ $isBooked ? 'disabled' : '' }}>
+
+                                    {{ $item->nomor_kursi }}
+
                                 </button>
                             @endforeach
                         </div>
@@ -87,4 +104,47 @@
         </div>
 
     </div>
+
+    {{-- SCRIPT --}}
+    <script>
+        const seatPrice = {{ $jadwal->film->harga }};
+        let selectedSeats = [];
+
+        const seatList = document.getElementById('seatList');
+        const seatInput = document.getElementById('seatInput');
+        const grandTotal = document.getElementById('grandTotal');
+
+        const rupiah = n => 'Rp ' + n.toLocaleString('id-ID');
+
+        document.querySelectorAll('.seat:not([disabled])').forEach(seat => {
+            seat.addEventListener('click', () => {
+                const seatCode = seat.dataset.seat;
+
+                if (selectedSeats.includes(seatCode)) {
+                    selectedSeats = selectedSeats.filter(s => s !== seatCode);
+                    seat.classList.remove('bg-blue-600');
+                    seat.classList.add('bg-gray-700');
+                } else {
+                    selectedSeats.push(seatCode);
+                    seat.classList.remove('bg-gray-700');
+                    seat.classList.add('bg-blue-600');
+                }
+
+                updateSummary();
+            });
+        });
+
+        function updateSummary() {
+            if (selectedSeats.length === 0) {
+                seatList.innerText = 'None';
+                grandTotal.innerText = rupiah(0);
+                seatInput.value = '';
+                return;
+            }
+
+            seatList.innerText = selectedSeats.join(', ');
+            grandTotal.innerText = rupiah(selectedSeats.length * seatPrice);
+            seatInput.value = selectedSeats.join(',');
+        }
+    </script>
 @endsection
