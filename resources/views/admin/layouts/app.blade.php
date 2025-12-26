@@ -7,6 +7,7 @@
     <title>SIMINLAB - {{ $title ?? 'Dashboard' }}</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('template-admin/src/assets/images/logos/favicon.png') }}" />
     <link rel="stylesheet" href="{{ asset('template-admin/src/assets/css/styles.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('template-admin/src/assets/css/custom.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     @yield('css')

@@ -1,0 +1,22 @@
+/* === FIX MINI SIDEBAR LAYOUT === */
+
+#main-wrapper.mini-sidebar .left-sidebar {
+    width: 70px;
+}
+
+#main-wrapper.mini-sidebar .left-sidebar .hide-menu {
+    display: none !important;
+}
+
+#main-wrapper.mini-sidebar .body-wrapper {
+    margin-left: 70px;
+}
+
+#main-wrapper[data-sidebartype="full"] .left-sidebar {
+    width: 260px;
+}
+
+#main-wrapper[data-sidebartype="full"] .body-wrapper {
+    margin-left: 260px;
+}
+a

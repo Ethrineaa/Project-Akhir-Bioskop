@@ -4,17 +4,13 @@
         {{-- BRAND / LOGO --}}
         <div class="brand-logo px-4 py-4 d-flex align-items-center gap-3">
             <img src="{{ asset('template-admin/src/assets/logo/cinema-removebg.png') }}"
+                class="logo-full"
                 alt="Logo Cinema"
                 style="width:40px;height:40px;object-fit:contain;">
 
-            <div>
+            <div class="logo-text">
                 <h5 class="mb-0 fw-bold">PAYON</h5>
                 <small class="text-muted">Admin Panel</small>
-            </div>
-
-            <div class="close-btn d-xl-none d-block ms-auto sidebartoggler cursor-pointer"
-                id="sidebarCollapse">
-                <i class="ti ti-x fs-6"></i>
             </div>
         </div>
 
@@ -22,7 +18,6 @@
         <nav class="sidebar-nav scroll-sidebar mt-2" data-simplebar="">
             <ul id="sidebarnav">
 
-                {{-- HOME --}}
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Home</span>
@@ -36,7 +31,6 @@
                     </a>
                 </li>
 
-                {{-- DATAMASTER --}}
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Datamaster</span>
