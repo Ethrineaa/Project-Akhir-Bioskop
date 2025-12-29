@@ -49,19 +49,18 @@
         <script>
             $(document).ready(function() {
                 const wrapper = $('#main-wrapper');
-                const sidebarMode = localStorage.getItem('sidebar-mode');
 
-                // LOAD MODE SAAT PAGE LOAD
-                if (sidebarMode === 'mini') {
+                // LOAD SIDEBAR MODE
+                const savedMode = localStorage.getItem('sidebar-mode');
+                if (savedMode === 'mini') {
                     wrapper.addClass('mini-sidebar');
                     wrapper.attr('data-sidebartype', 'mini-sidebar');
-                } else {
-                    wrapper.removeClass('mini-sidebar');
-                    wrapper.attr('data-sidebartype', 'full');
                 }
 
-                // TOGGLE & SAVE MODE
-                $('#headerCollapse, .sidebartoggler').on('click', function() {
+                // TOGGLE SIDEBAR
+                $('.sidebartoggler').on('click', function(e) {
+                    e.preventDefault();
+
                     wrapper.toggleClass('mini-sidebar');
 
                     if (wrapper.hasClass('mini-sidebar')) {
@@ -74,6 +73,7 @@
                 });
             });
         </script>
+
 
 </body>
 
