@@ -1,22 +1,63 @@
-/* === FIX MINI SIDEBAR LAYOUT === */
+/* ===============================
+   MINI SIDEBAR FIX (PAYON STYLE)
+================================ */
 
+/* Lebar sidebar */
 #main-wrapper.mini-sidebar .left-sidebar {
     width: 70px;
 }
 
-#main-wrapper.mini-sidebar .left-sidebar .hide-menu {
-    display: none !important;
-}
-
+/* Geser konten utama */
 #main-wrapper.mini-sidebar .body-wrapper {
     margin-left: 70px;
 }
 
+/* NORMAL */
 #main-wrapper[data-sidebartype="full"] .left-sidebar {
     width: 260px;
 }
-
 #main-wrapper[data-sidebartype="full"] .body-wrapper {
     margin-left: 260px;
+}
+
+/* ===============================
+   BRAND / LOGO
+================================ */
+
+/* Mini: hanya icon logo */
+#main-wrapper.mini-sidebar .brand-logo {
+    justify-content: center;
+    padding: 20px 0;
+}
+
+#main-wrapper.mini-sidebar .logo-text {
+    display: none;
+}
+
+/* ===============================
+   MENU ITEM
+================================ */
+
+/* Hilangkan text menu */
+#main-wrapper.mini-sidebar .hide-menu,
+#main-wrapper.mini-sidebar .nav-small-cap {
+    display: none !important;
+}
+
+/* Tengah icon */
+#main-wrapper.mini-sidebar .sidebar-link {
+    justify-content: center;
+    padding: 12px 0;
+}
+
+/* Icon lebih proporsional */
+#main-wrapper.mini-sidebar .sidebar-link i {
+    margin: 0;
+    font-size: 20px;
+}
+
+/* Hilangkan padding sisa */
+#main-wrapper.mini-sidebar .sidebar-item {
+    margin: 4px 0;
 }
 a
