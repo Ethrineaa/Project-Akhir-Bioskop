@@ -9,7 +9,7 @@
                 style="width:40px;height:40px;object-fit:contain;">
 
             <div class="logo-text">
-                <h5 class="mb-0 fw-bold">PAYON</h5>
+                <h5 class="mb-0 fw-bold">Cinema</h5>
                 <small class="text-muted">Admin Panel</small>
             </div>
         </div>
