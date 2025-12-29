@@ -46,6 +46,35 @@
                 });
             @endif
         </script>
+        <script>
+            $(document).ready(function() {
+                const wrapper = $('#main-wrapper');
+                const sidebarMode = localStorage.getItem('sidebar-mode');
+
+                // LOAD MODE SAAT PAGE LOAD
+                if (sidebarMode === 'mini') {
+                    wrapper.addClass('mini-sidebar');
+                    wrapper.attr('data-sidebartype', 'mini-sidebar');
+                } else {
+                    wrapper.removeClass('mini-sidebar');
+                    wrapper.attr('data-sidebartype', 'full');
+                }
+
+                // TOGGLE & SAVE MODE
+                $('#headerCollapse, .sidebartoggler').on('click', function() {
+                    wrapper.toggleClass('mini-sidebar');
+
+                    if (wrapper.hasClass('mini-sidebar')) {
+                        wrapper.attr('data-sidebartype', 'mini-sidebar');
+                        localStorage.setItem('sidebar-mode', 'mini');
+                    } else {
+                        wrapper.attr('data-sidebartype', 'full');
+                        localStorage.setItem('sidebar-mode', 'full');
+                    }
+                });
+            });
+        </script>
+
 </body>
 
 </html>
