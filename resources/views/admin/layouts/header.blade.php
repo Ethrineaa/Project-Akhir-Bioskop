@@ -3,9 +3,10 @@
 
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link nav-icon-hover sidebartoggler" href="javascript:void(0)">
-                    <i class="ti ti-menu-2 fs-5"></i>
+                <a class="nav-link nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
+                    <i class="ti ti-menu-2 afs-5"></i>
                 </a>
+
             </li>
         </ul>
 

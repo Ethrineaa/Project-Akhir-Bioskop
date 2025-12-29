@@ -47,28 +47,39 @@
             @endif
         </script>
         <script>
-            $(document).ready(function() {
-                const wrapper = $('#main-wrapper');
+            document.addEventListener("DOMContentLoaded", function() {
+                const wrapper = document.getElementById("main-wrapper");
+                const toggleBtn = document.getElementById("headerCollapse");
 
-                // LOAD SIDEBAR MODE
-                const savedMode = localStorage.getItem('sidebar-mode');
-                if (savedMode === 'mini') {
-                    wrapper.addClass('mini-sidebar');
-                    wrapper.attr('data-sidebartype', 'mini-sidebar');
+                if (!wrapper || !toggleBtn) return;
+
+                // ==========================
+                // LOAD SIDEBAR STATE
+                // ==========================
+                const sidebarMode = localStorage.getItem("sidebar-mode");
+
+                if (sidebarMode === "mini") {
+                    wrapper.classList.add("mini-sidebar");
+                    wrapper.setAttribute("data-sidebartype", "mini-sidebar");
+                } else {
+                    wrapper.classList.remove("mini-sidebar");
+                    wrapper.setAttribute("data-sidebartype", "full");
                 }
 
+                // ==========================
                 // TOGGLE SIDEBAR
-                $('.sidebartoggler').on('click', function(e) {
+                // ==========================
+                toggleBtn.addEventListener("click", function(e) {
                     e.preventDefault();
 
-                    wrapper.toggleClass('mini-sidebar');
+                    wrapper.classList.toggle("mini-sidebar");
 
-                    if (wrapper.hasClass('mini-sidebar')) {
-                        wrapper.attr('data-sidebartype', 'mini-sidebar');
-                        localStorage.setItem('sidebar-mode', 'mini');
+                    if (wrapper.classList.contains("mini-sidebar")) {
+                        wrapper.setAttribute("data-sidebartype", "mini-sidebar");
+                        localStorage.setItem("sidebar-mode", "mini");
                     } else {
-                        wrapper.attr('data-sidebartype', 'full');
-                        localStorage.setItem('sidebar-mode', 'full');
+                        wrapper.setAttribute("data-sidebartype", "full");
+                        localStorage.setItem("sidebar-mode", "full");
                     }
                 });
             });
@@ -77,4 +88,4 @@
 
 </body>
 
-</html>
+</html>s
