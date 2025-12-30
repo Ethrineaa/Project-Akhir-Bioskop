@@ -3,10 +3,8 @@
 
         {{-- BRAND / LOGO --}}
         <div class="brand-logo px-4 py-4 d-flex align-items-center gap-3">
-            <img src="{{ asset('template-admin/src/assets/logo/cinema-removebg.png') }}"
-                class="logo-full"
-                alt="Logo Cinema"
-                style="width:40px;height:40px;object-fit:contain;">
+            <img src="{{ asset('template-admin/src/assets/logo/cinema-removebg.png') }}" class="logo-full"
+                alt="Logo Cinema" style="width:40px;height:40px;object-fit:contain;">
 
             <div class="logo-text">
                 <h5 class="mb-0 fw-bold">Cinema</h5>
@@ -76,6 +74,18 @@
                     </a>
                 </li>
 
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Transaksi</span>
+                </li>
+
+                <li class="sidebar-item {{ Request::is('pemesanan*') ? 'selected' : '' }}">
+                    <a class="sidebar-link {{ Request::is('pemesanan*') ? 'active' : '' }}"
+                        href="{{ route('admin.pemesanan.index') }}">
+                        <i class="ti ti-calendar-time"></i>
+                        <span class="hide-menu">Data Pemesanan</span>
+                    </a>
+                </li>
             </ul>
         </nav>
 

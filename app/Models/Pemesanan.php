@@ -24,3 +24,4 @@ class Pemesanan extends Model
         return $this->hasOne(Pembayaran::class);
     }
 }
+jj
