@@ -20,9 +20,7 @@ class PemesananController extends Controller
     {
         $jadwal = Jadwal::with('film', 'studio')->findOrFail($jadwal_id);
 
-        $kursi = Kursi::where('studio_id', $jadwal->studio_id)
-            ->orderBy('nomor_kursi')
-            ->get();
+        $kursi = Kursi::where('studio_id', $jadwal->studio_id)->orderBy('nomor_kursi')->get();
 
         return view('user.kursi.index', compact('jadwal', 'kursi'));
     }
@@ -34,7 +32,7 @@ class PemesananController extends Controller
     {
         $request->validate([
             'jadwal_id' => 'required|exists:jadwals,id',
-            'seats'     => 'required|string'
+            'seats' => 'required|string',
         ]);
 
         // seats: "A1,A2,A3"
@@ -48,9 +46,7 @@ class PemesananController extends Controller
         $jadwal = Jadwal::with('film')->findOrFail($request->jadwal_id);
 
         // Validasi kursi milik studio
-        $validSeatCount = Kursi::where('studio_id', $jadwal->studio_id)
-            ->whereIn('nomor_kursi', $seats)
-            ->count();
+        $validSeatCount = Kursi::where('studio_id', $jadwal->studio_id)->whereIn('nomor_kursi', $seats)->count();
 
         if ($validSeatCount !== $jumlahTiket) {
             return back()->withErrors(['seats' => 'Kursi tidak valid']);
@@ -59,17 +55,16 @@ class PemesananController extends Controller
         $totalHarga = $jumlahTiket * $jadwal->film->harga;
 
         $pemesanan = DB::transaction(function () use ($jadwal, $jumlahTiket, $totalHarga) {
-
             $pemesanan = Pemesanan::create([
-                'jadwal_id'    => $jadwal->id,
-                'user_id'      => Auth::id(),
+                'jadwal_id' => $jadwal->id,
+                'user_id' => Auth::id(),
                 'jumlah_tiket' => $jumlahTiket,
-                'total_harga'  => $totalHarga,
+                'total_harga' => $totalHarga,
             ]);
 
             Pembayaran::create([
                 'pemesanan_id' => $pemesanan->id,
-                'status'       => 'waiting'
+                'status' => 'waiting',
             ]);
 
             return $pemesanan;
@@ -84,12 +79,9 @@ class PemesananController extends Controller
     // =============================
     public function index()
     {
-        $pemesanan = Pemesanan::with('jadwal.film')
-            ->where('user_id', Auth::id())
-            ->latest()
-            ->get();
+        $pemesanan = Pemesanan::with('jadwal.film')->where('user_id', Auth::id())->latest()->get();
 
-        return view('user.pemesanan.index', compact('pemesanan'));
+        return view('user.pemesanan.payment', compact('pemesanan'));
     }
 
     // =============================
@@ -97,12 +89,9 @@ class PemesananController extends Controller
     // =============================
     public function show($id)
     {
-        $pemesanan = Pemesanan::with([
-            'jadwal.film',
-            'pembayaran'
-        ])
-        ->where('user_id', Auth::id())
-        ->findOrFail($id);
+        $pemesanan = Pemesanan::with(['jadwal.film', 'pembayaran'])
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
 
         return view('user.pemesanan.show', compact('pemesanan'));
     }
@@ -112,9 +101,7 @@ class PemesananController extends Controller
     // =============================
     public function payment(Pemesanan $pemesanan)
     {
-        abort_if($pemesanan->user_id !== Auth::id(), 403);
-
-        $pemesanan->load('jadwal.film', 'pembayaran');
+        $pemesanan->load('jadwal.film', 'jadwal.studio');
 
         return view('user.pemesanan.payment', compact('pemesanan'));
     }

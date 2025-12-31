@@ -10,13 +10,15 @@ use App\Http\Controllers\Admin\FilmController as AdminFilmController;
 use App\Http\Controllers\Admin\StudioController;
 use App\Http\Controllers\Admin\KursiController;
 use App\Http\Controllers\Admin\JadwalController;
+use App\Http\Controllers\Admin\PemesananController as AdminPemesananController;
+use App\Http\Controllers\Admin\PembayaranController as AdminPembayaranController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 
 // USER Controllers
 use App\Http\Controllers\User\FilmController as UserFilmController;
 use App\Http\Controllers\User\UserDashboardController;
-use App\Http\Controllers\User\PemesananController;
-use App\Http\Controllers\User\PembayaranController;
+use App\Http\Controllers\User\PemesananController as PemesananController;
+use App\Http\Controllers\User\PembayaranController as PembayaranController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,34 +41,30 @@ Route::prefix('user')
     ->name('user.')
     ->middleware(['auth', 'role:user'])
     ->group(function () {
-
-        Route::get('/dashboard', [UserDashboardController::class, 'index'])
-            ->name('dashboard');
+        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 
         // =============================
         // PILIH KURSI
         // =============================
-        Route::get('kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])
-            ->name('kursi.index');
+        Route::get('kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])->name('kursi.index');
 
         // =============================
         // PEMESANAN
         // =============================
-        Route::resource('pemesanan', PemesananController::class)
-            ->only(['store', 'index', 'show']);
+        Route::resource('pemesanan', PemesananController::class)->only(['store', 'index', 'show']);
 
-        Route::get('pemesanan/{pemesanan}/payment', [PemesananController::class, 'payment'])
-            ->name('pemesanan.payment');
+        Route::get('pemesanan/{pemesanan}/payment', [PemesananController::class, 'payment'])->name('pemesanan.payment');
 
         // =============================
         // PEMBAYARAN
         // =============================
-        Route::post('pembayaran/{pembayaran}', [PembayaranController::class, 'store'])
-            ->name('pembayaran.store');
+        Route::post('pembayaran/{pembayaran}', [PembayaranController::class, 'store'])->name('pembayaran.store');
+
+        Route::get('/pembayaran/{id}', [PembayaranController::class, 'pay'])->name('pembayaran.pay');
     });
 
 /*
-|--------------------------------------------------------------------------
+|-------------------------------------------------------------------2-------
 | ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
@@ -82,6 +80,7 @@ Route::prefix('admin')
         Route::resource('studio', StudioController::class);
         Route::resource('kursi', KursiController::class);
         Route::resource('jadwal', JadwalController::class);
+        Route::resource('pemesanan', PemesananController::class);
     });
 
 /*

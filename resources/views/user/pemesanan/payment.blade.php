@@ -54,7 +54,7 @@
                     <p class="text-sm text-gray-400 mb-3">E-Wallet</p>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         @foreach (['QRIS','DANA','OVO','GoPay'] as $wallet)
-                            <button
+                            <button type="button"
                                 class="bg-white h-14 rounded-xl flex items-center justify-center
                                        hover:ring-2 hover:ring-blue-500 transition">
                                 <span class="text-black font-semibold">
@@ -72,7 +72,7 @@
                     </p>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         @foreach (['BCA','BRI','BNI','Mandiri'] as $bank)
-                            <button
+                            <button type="button"
                                 class="bg-white h-14 rounded-xl flex items-center justify-center
                                        hover:ring-2 hover:ring-blue-500 transition">
                                 <span class="text-black font-semibold">
@@ -103,7 +103,7 @@
                     <p class="text-sm text-gray-400 mb-3">Paylater</p>
                     <div class="grid grid-cols-2 gap-4">
                         @foreach (['Kredivo','Akulaku'] as $paylater)
-                            <button
+                            <button type="button"
                                 class="bg-white h-14 rounded-xl flex items-center justify-center
                                        hover:ring-2 hover:ring-blue-500 transition">
                                 <span class="text-black font-semibold">
@@ -175,13 +175,34 @@
                 </span>
             </div>
 
-            <button
+            {{-- BUTTON PAY --}}
+            <button id="pay-button"
                 class="w-full mt-6 bg-blue-600 hover:bg-blue-700
-                        py-3 rounded-xl font-semibold transition">
+                       py-3 rounded-xl font-semibold transition">
                 Pay Rp {{ number_format($pemesanan->total_harga + 4000,0,',','.') }} →
             </button>
         </div>
 
     </div>
 </div>
+
+{{-- MIDTRANS SNAP --}}
+<script src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="{{ config('midtrans.client_key') }}"></script>
+
+<script>
+    document.getElementById('pay-button').addEventListener('click', function () {
+        snap.pay('{{ $snapToken }}', {
+            onSuccess: function (result) {
+                window.location.href = "{{ route('user.pemesanan.index') }}";
+            },
+            onPending: function (result) {
+                alert('Menunggu pembayaran');
+            },
+            onError: function (result) {
+                alert('Pembayaran gagal');
+            }
+        });
+    });
+</script>
 @endsection
