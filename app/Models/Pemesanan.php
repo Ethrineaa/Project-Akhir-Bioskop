@@ -23,4 +23,9 @@ class Pemesanan extends Model
     {
         return $this->hasOne(Pembayaran::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -80,7 +80,7 @@ Route::prefix('admin')
         Route::resource('studio', StudioController::class);
         Route::resource('kursi', KursiController::class);
         Route::resource('jadwal', JadwalController::class);
-        Route::resource('pemesanan', PemesananController::class);
+        Route::resource('pemesanan', AdminPemesananController::class);
     });
 
 /*

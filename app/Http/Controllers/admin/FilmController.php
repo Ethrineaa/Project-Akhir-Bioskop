@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 class FilmController extends Controller
 {
+    protected $title = 'Film';
     public function index()
     {
         $title = "Film";

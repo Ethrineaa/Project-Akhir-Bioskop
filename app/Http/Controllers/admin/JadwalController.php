@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class JadwalController extends Controller
 {
-    protected $title = 'Jadwal Tayang';
+    protected $title = 'Jadwal';
 
     public function index()
     {
