@@ -53,7 +53,7 @@ Route::prefix('user')
         // =============================
         Route::resource('pemesanan', PemesananController::class)->only(['store', 'index', 'show']);
 
-        Route::get('pemesanan/{pemesanan}/payment', [PemesananController::class, 'payment'])->name('pemesanan.payment');
+        Route::post('/checkout', [PemesananController::class, 'checkout'])->name('pemesanan.checkout');
 
         // =============================
         // PEMBAYARAN

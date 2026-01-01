@@ -1,150 +1,154 @@
 @extends('layouts.landing')
 
 @section('content')
-    <div class="max-w-5xl mx-auto px-4 py-10 text-white">
+<div class="min-h-screen bg-gray-900 text-gray-100 px-6 py-10">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
 
-        {{-- HEADER --}}
-        <div class="mb-8">
-            <h1 class="text-2xl font-semibold">{{ $jadwal->film->judul }}</h1>
-            <p class="text-sm text-gray-400">
-                {{ $jadwal->film->genre->nama }} • Studio {{ $jadwal->studio->nama }} •
-                {{ \Carbon\Carbon::parse($jadwal->jam)->format('H:i') }}
-            </p>
-        </div>
-
-        {{-- SEAT CONTAINER --}}
-        <div class="bg-[#0B1220] rounded-2xl p-8">
+        {{-- ======================
+        LEFT : PILIH KURSI
+        ====================== --}}
+        <div class="lg:col-span-2">
+            <h2 class="text-2xl font-bold mb-6">
+                Pilih Kursi — {{ $jadwal->film->judul }}
+            </h2>
 
             {{-- SCREEN --}}
-            <div class="flex flex-col items-center mb-10">
-                <div class="w-72 h-2 bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full mb-2"></div>
-                <p class="text-xs tracking-widest text-gray-400">SCREEN</p>
+            <div class="mb-12 text-center">
+                <div class="bg-gradient-to-r from-transparent via-gray-400 to-transparent
+                            h-1.5 w-3/4 mx-auto rounded-full"></div>
+                <p class="text-xs tracking-widest text-gray-400 mt-3">SCREEN</p>
             </div>
 
-            {{-- SEATS --}}
-            @php
-                // CONTOH DATA BOOKED (ganti dari DB)
-                $bookedSeats = $bookedSeats ?? ['A1', 'B3', 'C5'];
+            {{-- ======================
+            KURSI (5 | LORONG | 5)
+            ====================== --}}
+            <div class="flex justify-center">
+                <div class="grid grid-cols-[repeat(5,_3rem)_3.5rem_repeat(5,_3rem)] gap-x-3 gap-y-5">
+                    @foreach ($kursi as $index => $item)
+                        @php
+                            $col = ($index % 10) + 1;
+                            $gridCol = $col > 5 ? $col + 1 : $col;
+                        @endphp
 
-                $groupedSeats = $kursi
-                    ->groupBy(fn($item) => substr($item->nomor_kursi, 0, 1))
-                    ->map(fn($seats) => $seats->sortBy(fn($seat) => intval(substr($seat->nomor_kursi, 1))));
-            @endphp
-
-            <div class="space-y-4 flex flex-col items-center">
-                @foreach ($groupedSeats as $row => $seats)
-                    <div class="flex items-center gap-3">
-                        <span class="w-4 text-gray-500 text-sm">{{ $row }}</span>
-
-                        <div class="flex items-center gap-3">
-                            @foreach ($seats->values() as $index => $item)
-                                {{-- GAP SETIAP 5 KURSI --}}
-                                @if ($index === 5)
-                                    <div class="w-6"></div>
-                                @endif
-
-                                @php
-                                    $isBooked = in_array($item->nomor_kursi, $bookedSeats);
-                                @endphp
-
-                                <button type="button" title="{{ $item->nomor_kursi }}" data-seat="{{ $item->nomor_kursi }}"
-                                    @class([
-                                        'seat w-8 h-8 rounded-md text-[10px] font-medium transition flex items-center justify-center',
-                                        'bg-gray-700 hover:bg-blue-600 cursor-pointer' => !$isBooked,
-                                        'bg-gray-500 opacity-40 cursor-not-allowed' => $isBooked,
-                                    ]) {{ $isBooked ? 'disabled' : '' }}>
-
-                                    {{ $item->nomor_kursi }}
-
-                                </button>
-                            @endforeach
-                        </div>
-                    </div>
-                @endforeach
+                        <button
+                            type="button"
+                            style="grid-column: {{ $gridCol }};"
+                            class="seat
+                                w-12 h-12
+                                rounded-lg
+                                text-sm font-semibold
+                                bg-gray-700 text-gray-200
+                                hover:bg-gray-600
+                                transition"
+                            data-seat="{{ $item->nomor_kursi }}">
+                            {{ $item->nomor_kursi }}
+                        </button>
+                    @endforeach
+                </div>
             </div>
 
-            {{-- LEGEND --}}
-            <div class="flex justify-center gap-6 text-xs mt-10 text-gray-400">
+            {{-- LEGEND (AREA KURSI) --}}
+            <div class="flex gap-8 mt-12 text-sm text-gray-300 justify-center">
                 <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 bg-gray-700 rounded"></span> Available
+                    <span class="w-4 h-4 bg-gray-700 rounded"></span>
+                    Tersedia
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 bg-blue-600 rounded"></span> Selected
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="w-4 h-4 bg-gray-500 rounded opacity-40"></span> Booked
+                    <span class="w-4 h-4 bg-emerald-500 rounded"></span>
+                    Dipilih
                 </div>
             </div>
         </div>
 
-        {{-- BOTTOM SUMMARY --}}
-        <div class="mt-8 bg-[#0F172A] rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+        {{-- ======================
+        RIGHT : BOOKING SUMMARY
+        ====================== --}}
+        <div class="bg-gray-800 rounded-2xl p-6 h-fit sticky top-24 shadow-xl border border-gray-700">
+            <h3 class="text-xl font-bold mb-6">Booking Summary</h3>
 
-            <div>
-                <p class="text-sm text-gray-400">Selected Seats</p>
-                <p id="seatList" class="font-medium">None</p>
-            </div>
-
-            <div class="flex items-center gap-6">
-                <div>
-                    <p class="text-xs text-gray-400">Total</p>
-                    <p class="text-lg font-semibold text-blue-500" id="grandTotal">Rp 0</p>
+            <div class="space-y-4 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Film</span>
+                    <span class="font-medium">{{ $jadwal->film->judul }}</span>
                 </div>
 
-                <form action="{{ route('user.pemesanan.store') }}" method="POST">
-                    @csrf
-                    <input type="hidden" id="seatInput" name="seats">
-                    <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Studio</span>
+                    <span>{{ $jadwal->studio->nama }}</span>
+                </div>
 
-                    <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-semibold">
-                        Buy Tickets →
-                    </button>
-                </form>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Jam</span>
+                    <span>{{ $jadwal->jam_tayang }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Kursi</span>
+                    <span id="seatList" class="font-semibold">-</span>
+                </div>
+
+                <hr class="border-gray-600">
+
+                <div class="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span id="totalHarga">Rp 0</span>
+                </div>
             </div>
+
+            {{-- LEGEND (BOOKING) --}}
+            <div class="flex gap-6 mt-6 text-xs text-gray-400">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 bg-gray-700 rounded"></span>
+                    Tersedia
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 bg-emerald-500 rounded"></span>
+                    Dipilih
+                </div>
+            </div>
+
+            <button id="payBtn"
+                class="mt-6 w-full bg-emerald-600 hover:bg-emerald-500
+                       py-3 rounded-xl font-semibold transition">
+                Proceed to Checkout →
+            </button>
         </div>
 
     </div>
+</div>
 
-    {{-- SCRIPT --}}
-    <script>
-        const seatPrice = {{ $jadwal->film->harga }};
-        let selectedSeats = [];
+{{-- MIDTRANS --}}
+<script src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="{{ config('midtrans.client_key') }}"></script>
 
-        const seatList = document.getElementById('seatList');
-        const seatInput = document.getElementById('seatInput');
-        const grandTotal = document.getElementById('grandTotal');
+<script>
+    const hargaTiket = {{ $jadwal->film->harga }};
+    let selectedSeats = [];
 
-        const rupiah = n => 'Rp ' + n.toLocaleString('id-ID');
+    document.querySelectorAll('.seat').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const seat = btn.dataset.seat;
 
-        document.querySelectorAll('.seat:not([disabled])').forEach(seat => {
-            seat.addEventListener('click', () => {
-                const seatCode = seat.dataset.seat;
-
-                if (selectedSeats.includes(seatCode)) {
-                    selectedSeats = selectedSeats.filter(s => s !== seatCode);
-                    seat.classList.remove('bg-blue-600');
-                    seat.classList.add('bg-gray-700');
-                } else {
-                    selectedSeats.push(seatCode);
-                    seat.classList.remove('bg-gray-700');
-                    seat.classList.add('bg-blue-600');
-                }
-
-                updateSummary();
-            });
-        });
-
-        function updateSummary() {
-            if (selectedSeats.length === 0) {
-                seatList.innerText = 'None';
-                grandTotal.innerText = rupiah(0);
-                seatInput.value = '';
-                return;
+            if (selectedSeats.includes(seat)) {
+                selectedSeats = selectedSeats.filter(s => s !== seat);
+                btn.classList.remove('bg-emerald-500','text-white');
+                btn.classList.add('bg-gray-700','text-gray-200');
+            } else {
+                selectedSeats.push(seat);
+                btn.classList.remove('bg-gray-700','text-gray-200');
+                btn.classList.add('bg-emerald-500','text-white');
             }
 
-            seatList.innerText = selectedSeats.join(', ');
-            grandTotal.innerText = rupiah(selectedSeats.length * seatPrice);
-            seatInput.value = selectedSeats.join(',');
-        }
-    </script>
+            updateSummary();
+        });
+    });
+
+    function updateSummary() {
+        document.getElementById('seatList').innerText =
+            selectedSeats.length ? selectedSeats.join(', ') : '-';
+
+        document.getElementById('totalHarga').innerText =
+            'Rp ' + (selectedSeats.length * hargaTiket).toLocaleString('id-ID');
+    }
+</script>
 @endsection
