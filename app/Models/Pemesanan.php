@@ -14,7 +14,7 @@ class Pemesanan extends Model
         return $this->belongsTo(Jadwal::class);
     }
 
-    public function kursis()
+    public function kursi()
     {
         return $this->belongsToMany(Kursi::class, 'kursi_pemesanan', 'pemesanan_id', 'kursi_id');
     }

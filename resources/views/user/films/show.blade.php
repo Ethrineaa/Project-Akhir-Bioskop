@@ -104,7 +104,7 @@
             @foreach ($days as $day)
                 @php
                     $dayKey = $day->format('Y-m-d');
-                    $filtered = $film->jadwals->filter(fn($j) => $j->tanggal === $dayKey);
+                    $filtered = $film->jadwal->filter(fn($j) => $j->tanggal === $dayKey);
                 @endphp
 
                 <div x-show="selectedDay === '{{ $dayKey }}'">
@@ -120,7 +120,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             @foreach ($filtered as $jadwal)
                                 @php
-                                    $total = $jadwal->studio->kursis->count();
+                                    $total = $jadwal->studio->kursi->count();
                                     $booked = $jadwal->pemesanan()->count();
                                     $available = $total - $booked;
                                 @endphp

@@ -8,7 +8,7 @@ class Film extends Model
 {
     protected $fillable = ['judul', 'sinopsis', 'durasi', 'harga', 'genre_id', 'poster'];
 
-    public function jadwals()
+    public function jadwal()
     {
         return $this->hasMany(Jadwal::class);
     }

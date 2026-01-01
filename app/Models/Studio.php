@@ -8,12 +8,12 @@ class Studio extends Model
 {
     protected $fillable = ['nama', 'kapasitas', 'layout'];
 
-    public function films()
+    public function film()
     {
         return $this->hasMany(Film::class);
     }
 
-    public function kursis()
+    public function kursi()
     {
         return $this->hasMany(Kursi::class);
     }

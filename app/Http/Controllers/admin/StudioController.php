@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Studio;
-use App\Models\Kursi; // <- penting
+use App\Models\Kursi;
 use Illuminate\Http\Request;
 
 class StudioController extends Controller

@@ -11,7 +11,7 @@ class FilmController extends Controller
     public function show($id)
     {
         // Ambil film berdasarkan ID
-        $film = Film::with('jadwals.studio')->findOrFail($id);
+        $film = Film::with('jadwal.studio')->findOrFail($id);
 
         return view('user.films.show', compact('film'));
     }

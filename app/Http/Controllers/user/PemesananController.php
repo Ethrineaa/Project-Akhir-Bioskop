@@ -6,10 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+
 use App\Models\Jadwal;
 use App\Models\Kursi;
 use App\Models\Pemesanan;
 use App\Models\Pembayaran;
+
+use Midtrans\Snap;
+use Midtrans\Config;
 
 class PemesananController extends Controller
 {
@@ -20,7 +24,9 @@ class PemesananController extends Controller
     {
         $jadwal = Jadwal::with('film', 'studio')->findOrFail($jadwal_id);
 
-        $kursi = Kursi::where('studio_id', $jadwal->studio_id)->orderBy('nomor_kursi')->get();
+        $kursi = Kursi::where('studio_id', $jadwal->studio_id)
+            ->orderBy('nomor_kursi')
+            ->get();
 
         return view('user.kursi.index', compact('jadwal', 'kursi'));
     }
@@ -35,7 +41,6 @@ class PemesananController extends Controller
             'seats' => 'required|string',
         ]);
 
-        // seats: "A1,A2,A3"
         $seats = explode(',', $request->seats);
         $jumlahTiket = count($seats);
 
@@ -45,8 +50,10 @@ class PemesananController extends Controller
 
         $jadwal = Jadwal::with('film')->findOrFail($request->jadwal_id);
 
-        // Validasi kursi milik studio
-        $validSeatCount = Kursi::where('studio_id', $jadwal->studio_id)->whereIn('nomor_kursi', $seats)->count();
+        // validasi kursi
+        $validSeatCount = Kursi::where('studio_id', $jadwal->studio_id)
+            ->whereIn('nomor_kursi', $seats)
+            ->count();
 
         if ($validSeatCount !== $jumlahTiket) {
             return back()->withErrors(['seats' => 'Kursi tidak valid']);
@@ -64,24 +71,27 @@ class PemesananController extends Controller
 
             Pembayaran::create([
                 'pemesanan_id' => $pemesanan->id,
-                'status' => 'waiting',
+                'status' => 'pending',
             ]);
 
             return $pemesanan;
         });
 
-        // ➡️ KE HALAMAN PEMBAYARAN
+        // ➡️ HALAMAN PAYMENT
         return redirect()->route('user.pemesanan.payment', $pemesanan->id);
     }
 
     // =============================
-    // RIWAYAT PEMESANAN USER
+    // RIWAYAT PEMESANAN
     // =============================
     public function index()
     {
-        $pemesanan = Pemesanan::with('jadwal.film')->where('user_id', Auth::id())->latest()->get();
+        $pemesanan = Pemesanan::with('jadwal.film')
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
-        return view('user.pemesanan.payment', compact('pemesanan'));
+        return view('user.pemesanan.index', compact('pemesanan'));
     }
 
     // =============================
@@ -97,12 +107,33 @@ class PemesananController extends Controller
     }
 
     // =============================
-    // HALAMAN PEMBAYARAN
+    // HALAMAN PEMBAYARAN + MIDTRANS
     // =============================
-    public function payment(Pemesanan $pemesanan)
+    public function payment($id)
     {
-        $pemesanan->load('jadwal.film', 'jadwal.studio');
+        $pemesanan = Pemesanan::with(['jadwal.film', 'jadwal.studio'])
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
 
-        return view('user.pemesanan.payment', compact('pemesanan'));
+        // MIDTRANS CONFIG
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => 'ORDER-' . $pemesanan->id . '-' . time(),
+                'gross_amount' => $pemesanan->total_harga + 4000,
+            ],
+            'customer_details' => [
+                'first_name' => Auth::user()->name ?? 'Customer',
+                'email' => Auth::user()->email ?? 'customer@mail.com',
+            ],
+        ];
+
+        $snapToken = Snap::getSnapToken($params);
+
+        return view('user.pemesanan.payment', compact('pemesanan', 'snapToken'));
     }
 }
