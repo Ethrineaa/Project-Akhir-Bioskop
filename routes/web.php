@@ -53,15 +53,11 @@ Route::prefix('user')
         // =============================
         Route::resource('pemesanan', PemesananController::class)->only(['store', 'index', 'show']);
 
-        Route::post('/checkout', [PemesananController::class, 'checkout'])->name('pemesanan.checkout');
-
-        // =============================
-        // PEMBAYARAN
-        // =============================
-        Route::post('pembayaran/{pembayaran}', [PembayaranController::class, 'store'])->name('pembayaran.store');
-
-        Route::get('/pembayaran/{id}', [PembayaranController::class, 'pay'])->name('pembayaran.pay');
+        Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi']);
+        Route::post('/pemesanan/checkout', [PemesananController::class, 'checkout'])->name('pemesanan.checkout');
     });
+
+Route::post('/midtrans/callback', [PemesananController::class, 'callback']);
 
 /*
 |-------------------------------------------------------------------2-------

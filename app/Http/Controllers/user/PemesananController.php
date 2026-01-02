@@ -4,136 +4,87 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-
 use App\Models\Jadwal;
 use App\Models\Kursi;
 use App\Models\Pemesanan;
 use App\Models\Pembayaran;
-
 use Midtrans\Snap;
 use Midtrans\Config;
+use Illuminate\Support\Facades\Auth;
 
 class PemesananController extends Controller
 {
-    // =============================
-    // HALAMAN PILIH KURSI
-    // =============================
-    public function pilihKursi($jadwal_id)
+    /**
+     * =========================
+     * HALAMAN PILIH KURSI
+     * =========================
+     */
+    public function pilihKursi(Jadwal $jadwal)
     {
-        $jadwal = Jadwal::with(['film', 'studio'])->findOrFail($jadwal_id);
+        // ✅ AMBIL SEMUA KURSI SESUAI STUDIO
+        $kursi = Kursi::where('studio_id', $jadwal->studio_id)->get();
 
-        $kursi = Kursi::where('studio_id', $jadwal->studio_id)
-            ->orderBy('nomor_kursi')
-            ->get();
+        // ✅ KURSI YANG SUDAH DIBAYAR
+        $kursiTerpesan = Pembayaran::where('status', 'paid')
+            ->whereHas('pemesanan', function ($q) use ($jadwal) {
+                $q->where('jadwal_id', $jadwal->id);
+            })
+            ->pluck('pemesanan_id')
+            ->toArray();
 
-        return view('user.kursi.index', compact('jadwal', 'kursi'));
+        return view('user.kursi.index', compact(
+            'jadwal',
+            'kursi',
+            'kursiTerpesan'
+        ));
     }
 
-    // =============================
-    // CHECKOUT + MIDTRANS SNAP
-    // =============================
-    public function store(Request $request)
+    /**
+     * =========================
+     * CHECKOUT + MIDTRANS
+     * =========================
+     */
+    public function checkout(Request $request)
     {
         $request->validate([
             'jadwal_id' => 'required|exists:jadwals,id',
-            'seats'     => 'required|string',
+            'seats' => 'required|array|min:1',
         ]);
 
-        $seats = explode(',', $request->seats);
-        $jumlahTiket = count($seats);
-
-        if ($jumlahTiket < 1) {
-            return response()->json([
-                'message' => 'Pilih minimal satu kursi'
-            ], 422);
-        }
-
-        $jadwal = Jadwal::with('film')->findOrFail($request->jadwal_id);
-
-        // =============================
-        // VALIDASI KURSI
-        // =============================
-        $validSeatCount = Kursi::where('studio_id', $jadwal->studio_id)
-            ->whereIn('nomor_kursi', $seats)
-            ->count();
-
-        if ($validSeatCount !== $jumlahTiket) {
-            return response()->json([
-                'message' => 'Kursi tidak valid'
-            ], 422);
-        }
-
+        $jadwal = Jadwal::findOrFail($request->jadwal_id);
+        $jumlahTiket = count($request->seats);
         $totalHarga = $jumlahTiket * $jadwal->film->harga;
 
-        // =============================
-        // SIMPAN PEMESANAN + PEMBAYARAN
-        // =============================
-        $pemesanan = DB::transaction(function () use ($jadwal, $jumlahTiket, $totalHarga) {
-            $pemesanan = Pemesanan::create([
-                'jadwal_id'    => $jadwal->id,
-                'user_id'      => Auth::id(),
-                'jumlah_tiket' => $jumlahTiket,
-                'total_harga'  => $totalHarga,
-            ]);
+        $pemesanan = Pemesanan::create([
+            'jadwal_id' => $jadwal->id,
+            'user_id' => Auth::id(),
+            'jumlah_tiket' => $jumlahTiket,
+            'total_harga' => $totalHarga,
+        ]);
 
-            Pembayaran::create([
-                'pemesanan_id' => $pemesanan->id,
-                'status'       => 'pending',
-            ]);
+        $pembayaran = Pembayaran::create([
+            'pemesanan_id' => $pemesanan->id,
+            'status' => 'waiting',
+        ]);
 
-            return $pemesanan;
-        });
+        // MIDTRANS
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = false;
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
 
-        // =============================
-        // MIDTRANS CONFIG
-        // =============================
-        Config::$serverKey    = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized  = true;
-        Config::$is3ds        = true;
-
-        $params = [
+        $snapToken = Snap::getSnapToken([
             'transaction_details' => [
-                'order_id'     => 'ORDER-' . $pemesanan->id . '-' . time(),
-                'gross_amount' => $pemesanan->total_harga,
+                'order_id' => 'ORDER-' . $pembayaran->id,
+                'gross_amount' => $totalHarga,
             ],
             'customer_details' => [
-                'first_name' => Auth::user()->name ?? 'Customer',
+                'first_name' => Auth::user()->name,
             ],
-        ];
-
-        $snapToken = Snap::getSnapToken($params);
+        ]);
 
         return response()->json([
-            'snapToken'    => $snapToken,
-            'pemesanan_id' => $pemesanan->id,
+            'snap_token' => $snapToken,
         ]);
-    }
-
-    // =============================
-    // RIWAYAT PEMESANAN USER
-    // =============================
-    public function index()
-    {
-        $pemesanan = Pemesanan::with(['jadwal.film', 'pembayaran'])
-            ->where('user_id', Auth::id())
-            ->latest()
-            ->get();
-
-        return view('user.pemesanan.index', compact('pemesanan'));
-    }
-
-    // =============================
-    // DETAIL PEMESANAN
-    // =============================
-    public function show($id)
-    {
-        $pemesanan = Pemesanan::with(['jadwal.film', 'pembayaran'])
-            ->where('user_id', Auth::id())
-            ->findOrFail($id);
-
-        return view('user.pemesanan.show', compact('pemesanan'));
     }
 }
