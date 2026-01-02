@@ -103,10 +103,12 @@
                     </div>
                 </div>
 
-                <button id="payBtn"
-                    class="mt-6 w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-semibold">
-                    Proceed to Checkout →
-                </button>
+                <a href="{{ route('user.films.show', $jadwal->film->id) }}">
+                    <button id="payBtn"
+                        class="mt-6 w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-semibold">
+                        Proceed to Checkout →
+                    </button>
+                </a>
             </div>
         </div>
     </div>
