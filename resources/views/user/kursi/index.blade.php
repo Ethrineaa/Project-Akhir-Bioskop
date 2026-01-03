@@ -46,8 +46,7 @@
                                 class="seat w-12 h-12 rounded-lg text-sm font-semibold transition
                                 {{ $isBooked
                                     ? 'bg-blue-300 text-blue-900 cursor-not-allowed opacity-80'
-                                    : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                                }} ">
+                                    : 'bg-gray-700 text-gray-200 hover:bg-gray-600' }} ">
                                 {{ $item->nomor_kursi }}
                             </button>
                         @endforeach
@@ -87,7 +86,7 @@
 
                     <div class="flex justify-between">
                         <span class="text-gray-400">Jam</span>
-                        <span>{{ $jadwal->jam_tayang }}</span>
+                        <span>{{ $jadwal->jam }}</span>
                     </div>
 
                     <div class="flex justify-between">
@@ -103,12 +102,19 @@
                     </div>
                 </div>
 
-                <a href="{{ route('user.films.show', $jadwal->film->id) }}">
-                    <button id="payBtn"
-                        class="mt-6 w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-semibold">
-                        Proceed to Checkout →
+                <div class="mt-6 flex gap-3">
+                    {{-- TOMBOL KEMBALI --}}
+                    <a href="{{ route('film.show', $jadwal->film->id) }}"
+                        class="flex-1 text-center bg-gray-700 hover:bg-gray-600 py-3 rounded-xl font-semibold">
+                        Back
+                    </a>
+
+                    {{-- TOMBOL PAY --}}
+                    <button id="payBtn" class="flex-1 bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-semibold">
+                        Pay
                     </button>
-                </a>
+                </div>
+
             </div>
         </div>
     </div>

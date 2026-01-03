@@ -131,7 +131,7 @@
                                     </p>
 
                                     <p class="text-sm text-gray-400 mt-1">
-                                        {{ $jadwal->jam_mulai }} - {{ $jadwal->jam_selesai }}
+                                        {{ $jadwal->jam }}
                                     </p>
 
                                     <p class="text-sm mt-3">
