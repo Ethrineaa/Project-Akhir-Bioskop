@@ -20,6 +20,8 @@ use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\PemesananController as PemesananController;
 use App\Http\Controllers\User\PembayaranController as PembayaranController;
 
+use App\Http\Controllers\MidtransController;
+
 /*
 |--------------------------------------------------------------------------
 | PUBLIC ROUTES
@@ -57,7 +59,7 @@ Route::prefix('user')
         Route::post('/pemesanan/checkout', [PemesananController::class, 'checkout'])->name('pemesanan.checkout');
     });
 
-Route::post('/midtrans/callback', [PemesananController::class, 'callback']);
+Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
 
 /*
 |-------------------------------------------------------------------2-------

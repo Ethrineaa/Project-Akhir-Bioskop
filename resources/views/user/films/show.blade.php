@@ -1,15 +1,13 @@
 @extends('layouts.landing')
 
 @section('content')
-
     {{-- ======================
         HERO SECTION
     ====================== --}}
     <div class="relative h-[380px] sm:h-[420px] md:h-[460px] -mb-8 sm:-mb-12 md:-mb-16">
 
         {{-- BACKGROUND --}}
-        <img src="{{ asset('posters/' . $film->poster) }}"
-            class="absolute inset-0 w-full h-full object-cover opacity-40">
+        <img src="{{ asset('posters/' . $film->poster) }}" class="absolute inset-0 w-full h-full object-cover opacity-40">
 
         <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
 
@@ -67,9 +65,7 @@
     {{-- ======================
         JADWAL SECTION
     ====================== --}}
-    <div id="jadwal"
-        class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-14"
-        x-data="{ selectedDay: null }">
+    <div id="jadwal" class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-14" x-data="{ selectedDay: null }">
 
         <h2 class="text-xl sm:text-2xl font-bold mb-6">
             Pilih Hari Tayang
@@ -86,8 +82,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
             @foreach ($days as $day)
                 @php $dayKey = $day->format('Y-m-d'); @endphp
-                <button
-                    @click="selectedDay = '{{ $dayKey }}'"
+                <button @click="selectedDay = '{{ $dayKey }}'"
                     class="p-3 sm:p-4 rounded-xl bg-gray-900 hover:bg-gray-800 border border-gray-700">
                     <p class="font-semibold text-sm sm:text-base">
                         {{ $day->translatedFormat('D') }}
@@ -135,12 +130,20 @@
                                     </p>
 
                                     <p class="text-sm mt-3">
-                                        Kursi tersedia:
-                                        <span class="font-bold text-emerald-400">
-                                            {{ $available }}
-                                        </span>
-                                        / {{ $total }}
+                                        @if ($jadwal->available_seats <= 0)
+                                            <span class="font-bold text-red-500">
+                                                Tidak ada kursi tersedia
+                                            </span>
+                                        @else
+                                            Kursi tersedia:
+                                            <span class="font-bold text-emerald-400">
+                                                {{ $jadwal->available_seats }}
+                                            </span>
+                                            / {{ $jadwal->studio->kursi->count() }}
+                                        @endif
                                     </p>
+
+
 
                                     <a href="{{ route('user.kursi.index', $jadwal->id) }}"
                                         class="block mt-4 text-center bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg">
@@ -166,5 +169,4 @@
             ← Kembali ke Daftar Film
         </a>
     </div>
-
 @endsection

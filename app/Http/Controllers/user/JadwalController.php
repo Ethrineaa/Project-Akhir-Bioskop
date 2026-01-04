@@ -13,7 +13,7 @@ class JadwalController extends Controller
      */
     public function index()
     {
-        //fyuftftyft
+        //
     }
 
     /**

@@ -11,9 +11,20 @@ use App\Models\Pembayaran;
 use Midtrans\Snap;
 use Midtrans\Config;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PemesananController extends Controller
 {
+    public function index()
+    {
+        $pemesanans = Pemesanan::with(['jadwal.film', 'pembayaran'])
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
+
+        return view('user.pemesanans.index', compact('pemesanans'));
+    }
+
     /**
      * =========================
      * HALAMAN PILIH KURSI
@@ -21,22 +32,17 @@ class PemesananController extends Controller
      */
     public function pilihKursi(Jadwal $jadwal)
     {
-        // ✅ AMBIL SEMUA KURSI SESUAI STUDIO
         $kursi = Kursi::where('studio_id', $jadwal->studio_id)->get();
 
-        // ✅ KURSI YANG SUDAH DIBAYAR
-        $kursiTerpesan = Pembayaran::where('status', 'paid')
-            ->whereHas('pemesanan', function ($q) use ($jadwal) {
-                $q->where('jadwal_id', $jadwal->id);
-            })
-            ->pluck('pemesanan_id')
+        $kursiTerpesan = DB::table('kursi_pemesanan')
+            ->join('pemesanans', 'pemesanans.id', '=', 'kursi_pemesanan.pemesanan_id')
+            ->join('pembayaran', 'pembayaran.pemesanan_id', '=', 'pemesanans.id')
+            ->where('pemesanans.jadwal_id', $jadwal->id)
+            ->whereIn('pembayaran.status', ['waiting', 'pending', 'paid'])
+            ->pluck('kursi_pemesanan.kursi_id')
             ->toArray();
 
-        return view('user.kursi.index', compact(
-            'jadwal',
-            'kursi',
-            'kursiTerpesan'
-        ));
+        return view('user.kursi.index', compact('jadwal', 'kursi', 'kursiTerpesan'));
     }
 
     /**

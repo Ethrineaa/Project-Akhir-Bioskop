@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>CineMagic</title>
+    <title>Cinema</title>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,16 +18,42 @@
     <!-- ====================== NAVBAR ====================== -->
     <nav class="bg-gray-800 py-4" x-data="{ openLogin: false }">
         <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
-            <a href="/" class="text-2xl font-bold">CineMagic</a>
+            <a href="/" class="text-2xl font-bold">Cinema</a>
 
             <div class="flex items-center gap-4">
 
                 @auth
+                    <!-- =================== TICKET HISTORY ICON =================== -->
+                    <div class="relative" x-data="{ openTicket: false }">
+                        @php
+                            $pendingCount = \App\Models\Pemesanan::where('user_id', auth()->id())
+                                ->whereHas('pembayaran', function($q) {
+                                    $q->whereIn('status', ['waiting', 'pending']);
+                                })->count();
+                        @endphp
+                        <a href="{{ route('user.pemesanan.index') }}" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition relative"
+                            title="Riwayat Pemesanan">
+                            <!-- Heroicon Ticket -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 2H15C16.1046 2 17 2.89543 17 4V6.382C16.407 6.14 15.722 6 15 6C13.3431 6 12 7.34315 12 9C12 10.6569 13.3431 12 15 12C15.722 12 16.407 11.86 17 11.618V20C17 21.1046 16.1046 22 15 22H9C7.89543 22 7 21.1046 7 20V17.382C7.593 17.624 8.278 17.764 9 17.764C10.6569 17.764 12 16.421 12 14.764C12 13.1071 10.6569 11.764 9 11.764C8.278 11.764 7.593 11.904 7 12.146V4C7 2.89543 7.89543 2 9 2Z" />
+                            </svg>
+
+                            <!-- Badge Jumlah Pemesanan Pending -->
+                            @if($pendingCount > 0)
+                                <span
+                                    class="absolute -top-1 -right-1 bg-red-500 text-xs w-5 h-5 flex items-center justify-center rounded-full font-semibold">
+                                    {{ $pendingCount }}
+                                </span>
+                            @endif
+                        </a>
+                    </div>
+
                     <!-- =================== USER DROPDOWN =================== -->
                     <div class="relative" x-data="{ open: false }">
-
-                        <!-- ICON USER YANG BAGUS -->
-                        <button @click="open = !open" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
+                        <button @click="open = !open"
+                            class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
                             <!-- Heroicon User Circle -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor" stroke-width="1.8">
@@ -40,34 +65,37 @@
                         <!-- DROPDOWN -->
                         <div x-show="open" @click.away="open=false" x-transition
                             class="absolute right-0 mt-2 w-44 bg-gray-900 p-3 rounded-lg shadow-lg">
-
                             <p class="font-semibold">{{ Auth::user()->name }}</p>
                             <hr class="my-2 border-gray-700">
-
-                            <a href="{{ route('user.dashboard') }}" class="block py-1 hover:text-blue-400">
-                                Dashboard
-                            </a>
-
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button class="mt-2 text-red-400 hover:text-red-300">Logout</button>
                             </form>
-
                         </div>
                     </div>
-                @else
-                    <!-- =================== USER ICON (OPEN LOGIN MODAL) =================== -->
-                    <button @click="openLogin = true" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
 
-                        <!-- Heroicon User Solid -->
+                @else
+                    <!-- =================== TICKET ICON UNTUK BELUM LOGIN =================== -->
+                    <a href="{{ route('login') }}" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition relative"
+                        title="Login untuk melihat riwayat">
+                        <!-- Heroicon Ticket -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 2H15C16.1046 2 17 2.89543 17 4V6.382C16.407 6.14 15.722 6 15 6C13.3431 6 12 7.34315 12 9C12 10.6569 13.3431 12 15 12C15.722 12 16.407 11.86 17 11.618V20C17 21.1046 16.1046 22 15 22H9C7.89543 22 7 21.1046 7 20V17.382C7.593 17.624 8.278 17.764 9 17.764C10.6569 17.764 12 16.421 12 14.764C12 13.1071 10.6569 11.764 9 11.764C8.278 11.764 7.593 11.904 7 12.146V4C7 2.89543 7.89543 2 9 2Z" />
+                        </svg>
+                    </a>
+
+                    <!-- =================== USER ICON BUKA LOGIN MODAL =================== -->
+                    <button @click="openLogin = true"
+                        class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 2a4 4 0 110 8 4 4 0 010-8zm-7 14a7 7 0 1114 0H3z"
+                            <path fill-rule="evenodd"
+                                d="M10 2a4 4 0 110 8 4 4 0 010-8zm-7 14a7 7 0 1114 0H3z"
                                 clip-rule="evenodd" />
                         </svg>
-
                     </button>
                 @endauth
-
             </div>
         </div>
 
