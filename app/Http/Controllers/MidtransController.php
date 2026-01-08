@@ -2,54 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pemesanan;
-use App\Models\Pembayaran;
 use Illuminate\Http\Request;
-
+use App\Models\Pembayaran;
+use Illuminate\Support\Facades\Log;
 class MidtransController extends Controller
 {
-     public function callback(Request $request)
+    public function callback(Request $request)
     {
-        $serverKey = config('midtrans.server_key');
-        $signature = hash('sha512',
-            $request->order_id .
-            $request->status_code .
-            $request->gross_amount .
-            $serverKey
-        );
+        Log::info('MIDTRANS CALLBACK RECEIVED', $request->all());
 
-        if ($signature !== $request->signature_key) {
+        // =========================
+        // VALIDASI SIGNATURE
+        // =========================
+        $serverKey = config('midtrans.server_key');
+        $signatureKey = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+
+        if ($signatureKey !== $request->signature_key) {
+            Log::warning('MIDTRANS INVALID SIGNATURE', ['order_id' => $request->order_id]);
             return response()->json(['message' => 'Invalid signature'], 403);
         }
 
-        // ORDER-12 → 12
-        $pemesananId = str_replace('ORDER-', '', $request->order_id);
+        // =========================
+        // AMBIL PEMESANAN ID
+        // order_id = ORDER-12
+        // =========================
+        $pemesananId = (int) str_replace('ORDER-', '', $request->order_id);
 
-        $pemesanan = Pemesanan::findOrFail($pemesananId);
-        $pembayaran = Pembayaran::where('pemesanan_id', $pemesanan->id)->first();
+        $pembayaran = Pembayaran::where('pemesanan_id', $pemesananId)->first();
 
-        switch ($request->transaction_status) {
-            case 'capture':
-            case 'settlement':
-                $status = 'paid';
-                break;
-
-            case 'pending':
-                $status = 'pending';
-                break;
-
-            case 'expire':
-            case 'cancel':
-            case 'deny':
-                $status = 'waiting';
-                break;
-
-            default:
-                $status = 'waiting';
+        if (!$pembayaran) {
+            Log::warning('MIDTRANS PEMBAYARAN NOT FOUND', ['pemesanan_id' => $pemesananId]);
+            return response()->json(['message' => 'Pembayaran not found'], 404);
         }
 
-        $pemesanan->update(['status' => $status]);
-        $pembayaran->update(['status' => $status]);
+        $transactionStatus = $request->transaction_status;
+        $fraudStatus = $request->fraud_status ?? null;
+
+        // =========================
+        // LOGIC STATUS
+        // =========================
+        if ($transactionStatus === 'settlement' || ($transactionStatus === 'capture' && $fraudStatus === 'accept')) {
+            $pembayaran->update(['status' => 'paid']);
+            Log::info('MIDTRANS PAYMENT SUCCESS', ['pemesanan_id' => $pemesananId, 'status' => 'paid']);
+        } elseif (in_array($transactionStatus, ['cancel', 'expire', 'deny'])) {
+            // OPTIONAL: biarkan waiting atau pending
+            $pembayaran->update(['status' => 'waiting']);
+            Log::info('MIDTRANS PAYMENT FAILED/CANCELLED', ['pemesanan_id' => $pemesananId, 'status' => 'waiting']);
+        }
 
         return response()->json(['message' => 'OK']);
     }

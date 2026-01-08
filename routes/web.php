@@ -59,8 +59,7 @@ Route::prefix('user')
         Route::post('/pemesanan/checkout', [PemesananController::class, 'checkout'])->name('pemesanan.checkout');
     });
 
-Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
-
+        Route::post('/midtrans/callback', [MidtransController::class, 'callback']);
 /*
 |-------------------------------------------------------------------2-------
 | ADMIN ROUTES

@@ -8,10 +8,9 @@ use App\Models\Jadwal;
 use App\Models\Kursi;
 use App\Models\Pemesanan;
 use App\Models\Pembayaran;
-use Midtrans\Snap;
-use Midtrans\Config;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PemesananController extends Controller
 {
@@ -27,7 +26,7 @@ class PemesananController extends Controller
 
     /**
      * =========================
-     * HALAMAN PILIH KURSI
+     * PILIH KURSI
      * =========================
      */
     public function pilihKursi(Jadwal $jadwal)
@@ -38,7 +37,7 @@ class PemesananController extends Controller
             ->join('pemesanans', 'pemesanans.id', '=', 'kursi_pemesanan.pemesanan_id')
             ->join('pembayaran', 'pembayaran.pemesanan_id', '=', 'pemesanans.id')
             ->where('pemesanans.jadwal_id', $jadwal->id)
-            ->whereIn('pembayaran.status', ['waiting', 'pending', 'paid'])
+            ->where('pembayaran.status', 'paid')
             ->pluck('kursi_pemesanan.kursi_id')
             ->toArray();
 
@@ -53,44 +52,85 @@ class PemesananController extends Controller
     public function checkout(Request $request)
     {
         $request->validate([
-            'jadwal_id' => 'required|exists:jadwals,id',
-            'seats' => 'required|array|min:1',
+            'jadwal_id'   => 'required|exists:jadwals,id',
+            'seats'       => 'required|array|min:1',
+            'seats.*.id'  => 'required|exists:kursis,id',
         ]);
 
-        $jadwal = Jadwal::findOrFail($request->jadwal_id);
-        $jumlahTiket = count($request->seats);
-        $totalHarga = $jumlahTiket * $jadwal->film->harga;
+        $jadwal  = Jadwal::with('film')->findOrFail($request->jadwal_id);
+        $seatIds = collect($request->seats)->pluck('id')->toArray();
 
-        $pemesanan = Pemesanan::create([
-            'jadwal_id' => $jadwal->id,
-            'user_id' => Auth::id(),
-            'jumlah_tiket' => $jumlahTiket,
-            'total_harga' => $totalHarga,
-        ]);
+        // CEK KURSI YANG SUDAH PAID
+        $sudahTerpesan = DB::table('kursi_pemesanan')
+            ->join('pemesanans', 'pemesanans.id', '=', 'kursi_pemesanan.pemesanan_id')
+            ->join('pembayaran', 'pembayaran.pemesanan_id', '=', 'pemesanans.id')
+            ->where('pemesanans.jadwal_id', $jadwal->id)
+            ->where('pembayaran.status', 'paid')
+            ->whereIn('kursi_pemesanan.kursi_id', $seatIds)
+            ->exists();
 
-        $pembayaran = Pembayaran::create([
-            'pemesanan_id' => $pemesanan->id,
-            'status' => 'waiting',
-        ]);
+        if ($sudahTerpesan) {
+            return response()->json(['message' => 'Kursi sudah dipesan'], 409);
+        }
 
-        // MIDTRANS
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = false;
-        Config::$isSanitized = true;
-        Config::$is3ds = true;
+        DB::beginTransaction();
+        try {
+            $jumlahTiket = count($seatIds);
+            $totalHarga  = $jumlahTiket * $jadwal->film->harga;
 
-        $snapToken = Snap::getSnapToken([
-            'transaction_details' => [
-                'order_id' => 'ORDER-' . $pembayaran->id,
-                'gross_amount' => $totalHarga,
-            ],
-            'customer_details' => [
-                'first_name' => Auth::user()->name,
-            ],
-        ]);
+            // 1️⃣ SIMPAN PEMESANAN
+            $pemesanan = Pemesanan::create([
+                'jadwal_id'    => $jadwal->id,
+                'user_id'      => Auth::id(),
+                'jumlah_tiket' => $jumlahTiket,
+                'total_harga'  => $totalHarga,
+            ]);
 
-        return response()->json([
-            'snap_token' => $snapToken,
-        ]);
+            // 2️⃣ SIMPAN PEMBAYARAN
+            Pembayaran::create([
+                'pemesanan_id' => $pemesanan->id,
+                'status'       => 'waiting',
+            ]);
+
+            // 3️⃣ SIMPAN KURSI
+            foreach ($seatIds as $kursiId) {
+                DB::table('kursi_pemesanan')->insert([
+                    'pemesanan_id' => $pemesanan->id,
+                    'kursi_id'     => $kursiId,
+                    'created_at'   => now(),
+                    'updated_at'   => now(),
+                ]);
+            }
+
+            DB::commit();
+
+            // ======================
+            // MIDTRANS
+            // ======================
+            \Midtrans\Config::$serverKey    = config('midtrans.server_key');
+            \Midtrans\Config::$isProduction = false;
+            \Midtrans\Config::$isSanitized  = true;
+            \Midtrans\Config::$is3ds        = true;
+
+            $snapToken = \Midtrans\Snap::getSnapToken([
+                'transaction_details' => [
+                    'order_id'     => 'ORDER-' . $pemesanan->id,
+                    'gross_amount' => $totalHarga,
+                ],
+                'customer_details' => [
+                    'first_name' => Auth::user()->name,
+                ],
+            ]);
+
+            return response()->json(['snap_token' => $snapToken]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'message' => 'Gagal membuat pemesanan',
+            ], 500);
+        }
     }
 }
