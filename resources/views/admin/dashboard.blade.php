@@ -98,33 +98,37 @@
 
 
 @section('js')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-    const ctx = document.getElementById('salesChart');
+    <script>
+        const ctx = document.getElementById('salesChart');
 
-    new Chart(ctx, {
-        type: 'bar', // <-- GANTI JADI BAR
-        data: {
-            labels: {!! json_encode($chartLabels ?? ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']) !!},
-            datasets: [{
-                label: 'Tiket Terjual',
-                data: {!! json_encode($chartData ?? [12, 19, 7, 15, 22, 30, 18]) !!},
-                backgroundColor: 'rgba(99, 102, 241, 0.7)', // warna batang
-                borderColor: 'rgba(79, 70, 229, 1)',
-                borderWidth: 1,
-                borderRadius: 6 // ujung batang melengkung
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
+        new Chart(ctx, {
+            type: 'bar', // <-- GANTI JADI BAR
+            data: {
+                labels: {!! json_encode($chartLabels ?? ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']) !!},
+                datasets: [{
+                    label: 'Tiket Terjual',
+                    data: {!! json_encode($chartData ?? [12, 19, 7, 15, 22, 30, 18]) !!},
+                    backgroundColor: 'rgba(99, 102, 241, 0.7)', // warna batang
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6 // ujung batang melengkung
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        }
+                    }
                 }
             }
-        }
-    });
-</script>
-@endsection
 
+        });
+    </script>
+@endsection
