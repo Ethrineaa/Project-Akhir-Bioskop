@@ -82,7 +82,7 @@
                 <li class="sidebar-item {{ Request::is('pemesanan*') ? 'selected' : '' }}">
                     <a class="sidebar-link {{ Request::is('pemesanan*') ? 'active' : '' }}"
                         href="{{ route('admin.pemesanan.index') }}">
-                        <i class="ti ti-calendar-time"></i>
+                        <i class="ti ti-clipboard-list"></i>
                         <span class="hide-menu">Data Pemesanan</span>
                     </a>
                 </li>

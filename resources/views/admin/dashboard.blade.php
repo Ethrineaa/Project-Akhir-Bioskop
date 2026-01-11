@@ -1,32 +1,43 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <div class="row">
+    <div class="row g-4">
 
-        {{-- Statistik Card --}}
+        {{-- Total Penjualan --}}
         <div class="col-md-4">
-            <div class="card text-bg-primary mb-3 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Total Penjualan Bulan Ini</h5>
-                    <h2 class="fw-bold">Rp {{ number_format($penjualanBulanIni ?? 0, 0, ',', '.') }}</h2>
+            <div class="stat-card bg-soft-purple">
+                <div class="stat-icon bg-purple">
+                    <i class="ti ti-currency-dollar"></i>
+                </div>
+                <div class="stat-info">
+                    <p>Total Penjualan Bulan Ini</p>
+                    <h3>Rp {{ number_format($penjualanBulanIni ?? 0, 0, ',', '.') }}</h3>
                 </div>
             </div>
         </div>
 
+        {{-- Total Tiket Terjual --}}
         <div class="col-md-4">
-            <div class="card text-bg-success mb-3 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Total Tiket Terjual</h5>
-                    <h2 class="fw-bold">{{ $tiketTerjual ?? 0 }}</h2>
+            <div class="stat-card bg-soft-orange">
+                <div class="stat-icon bg-orange">
+                    <i class="ti ti-ticket"></i>
+                </div>
+                <div class="stat-info">
+                    <p>Total Tiket Terjual</p>
+                    <h3>{{ $tiketTerjual ?? 0 }}</h3>
                 </div>
             </div>
         </div>
 
+        {{-- Film Tayang Hari Ini --}}
         <div class="col-md-4">
-            <div class="card text-bg-warning mb-3 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Film Tayang Hari Ini</h5>
-                    <h2 class="fw-bold">{{ count($filmsToday ?? []) }}</h2>
+            <div class="stat-card bg-soft-green">
+                <div class="stat-icon bg-green">
+                    <i class="ti ti-movie"></i>
+                </div>
+                <div class="stat-info">
+                    <p>Film Tayang Hari Ini</p>
+                    <h3>{{ count($filmsToday ?? []) }}</h3>
                 </div>
             </div>
         </div>
@@ -34,37 +45,49 @@
     </div>
 
 
+
     <div class="row mt-4">
 
-        {{-- Grafik Penjualan Tiket --}}
+        {{-- Grafik --}}
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="fw-semibold mb-4">Grafik Penjualan Tiket</h5>
+                    <h5 class="fw-semibold mb-4">
+                        <i class="ti ti-chart-line me-1"></i>
+                        Grafik Penjualan Tiket
+                    </h5>
 
                     <canvas id="salesChart" height="120"></canvas>
                 </div>
             </div>
         </div>
 
-        {{-- Film yang tayang hari ini --}}
+        {{-- Film Today --}}
         <div class="col-md-4">
-            <h5 class="fw-semibold mb-3">🎬 Film yang Tayang Hari Ini</h5>
+            <h5 class="fw-semibold mb-3">
+                <i class="ti ti-movie me-1"></i>
+                Film yang Tayang Hari Ini
+            </h5>
 
             @forelse ($filmsToday as $film)
                 <div class="card mb-3 shadow-sm">
                     <div class="card-body d-flex align-items-center">
-                        <img src="{{ asset('posters/' . $film->poster) }}" width="60" class="rounded me-3">
+                        <img src="{{ asset('posters/' . $film->poster) }}" width="60" height="80"
+                            class="rounded me-3 object-fit-cover">
 
                         <div>
                             <h6 class="mb-1">{{ $film->judul }}</h6>
-                            <small class="text-muted">{{ $film->genre->nama }}</small>
+                            <small class="text-muted">
+                                <i class="ti ti-category me-1"></i>
+                                {{ $film->genre->nama }}
+                            </small>
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="alert alert-info">
-                    Tidak ada film tayang hari ini.
+                <div class="alert alert-info d-flex align-items-center">
+                    <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+                    <span>Tidak ada film tayang hari ini.</span>
                 </div>
             @endforelse
 
@@ -92,7 +115,7 @@
             },
             options: {
                 responsive: true,
-                tension: 0.3
+                tension: 0.4
             }
         });
     </script>
