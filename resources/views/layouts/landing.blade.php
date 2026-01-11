@@ -11,6 +11,8 @@
 
     <!-- AlpineJS -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 </head>
 
 <body class="bg-gray-900 text-white">
@@ -27,11 +29,13 @@
                     <div class="relative" x-data="{ openTicket: false }">
                         @php
                             $pendingCount = \App\Models\Pemesanan::where('user_id', auth()->id())
-                                ->whereHas('pembayaran', function($q) {
+                                ->whereHas('pembayaran', function ($q) {
                                     $q->whereIn('status', ['waiting', 'pending']);
-                                })->count();
+                                })
+                                ->count();
                         @endphp
-                        <a href="{{ route('user.pemesanan.index') }}" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition relative"
+                        <a href="{{ route('user.pemesanan.index') }}"
+                            class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition relative"
                             title="Riwayat Pemesanan">
                             <!-- Heroicon Ticket -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24"
@@ -41,7 +45,7 @@
                             </svg>
 
                             <!-- Badge Jumlah Pemesanan Pending -->
-                            @if($pendingCount > 0)
+                            @if ($pendingCount > 0)
                                 <span
                                     class="absolute -top-1 -right-1 bg-red-500 text-xs w-5 h-5 flex items-center justify-center rounded-full font-semibold">
                                     {{ $pendingCount }}
@@ -52,8 +56,7 @@
 
                     <!-- =================== USER DROPDOWN =================== -->
                     <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open"
-                            class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
+                        <button @click="open = !open" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
                             <!-- Heroicon User Circle -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor" stroke-width="1.8">
@@ -73,10 +76,10 @@
                             </form>
                         </div>
                     </div>
-
                 @else
                     <!-- =================== TICKET ICON UNTUK BELUM LOGIN =================== -->
-                    <a href="{{ route('login') }}" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition relative"
+                    <a href="{{ route('login') }}"
+                        class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition relative"
                         title="Login untuk melihat riwayat">
                         <!-- Heroicon Ticket -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24"
@@ -87,11 +90,9 @@
                     </a>
 
                     <!-- =================== USER ICON BUKA LOGIN MODAL =================== -->
-                    <button @click="openLogin = true"
-                        class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
+                    <button @click="openLogin = true" class="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M10 2a4 4 0 110 8 4 4 0 010-8zm-7 14a7 7 0 1114 0H3z"
+                            <path fill-rule="evenodd" d="M10 2a4 4 0 110 8 4 4 0 010-8zm-7 14a7 7 0 1114 0H3z"
                                 clip-rule="evenodd" />
                         </svg>
                     </button>
