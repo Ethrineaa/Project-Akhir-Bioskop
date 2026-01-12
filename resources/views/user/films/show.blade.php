@@ -109,6 +109,7 @@
 
                     @if ($filtered->isEmpty())
                         <p class="text-gray-400">
+                            <i class="bi bi-info-circle-fill me-2 fs-5"></i>
                             Tidak ada jadwal tersedia
                         </p>
                     @else

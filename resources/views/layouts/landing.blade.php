@@ -6,20 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cinema</title>
 
+    <!-- IMPORTANT: CSRF TOKEN -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- IMPORTANT: BASE URL -->
+    <meta name="base-url" content="{{ url('/') }}">
+
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- AlpineJS -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
 <body class="bg-gray-900 text-white">
 
-    <!-- ====================== NAVBAR ====================== -->
+<!-- ====================== NAVBAR ====================== -->
 <nav class="bg-gray-800 py-4" x-data="{ openLogin: false }">
     <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
+
         <!-- LOGO -->
         <a href="/" class="text-2xl font-bold tracking-wide">Cinema</a>
 
@@ -27,7 +36,6 @@
         <div class="flex items-center gap-3">
 
             @auth
-                <!-- ===== HITUNG PEMESANAN PENDING ===== -->
                 @php
                     $pendingCount = \App\Models\Pemesanan::where('user_id', auth()->id())
                         ->whereHas('pembayaran', function ($q) {
@@ -35,11 +43,10 @@
                         })->count();
                 @endphp
 
-                <!-- ===== ICON RIWAYAT PEMESANAN ===== -->
+                <!-- RIWAYAT -->
                 <a href="{{ route('user.pemesanan.index') }}"
                    class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                          hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition"
-                   title="Riwayat Pemesanan">
+                          hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition">
 
                     <i class="fa-solid fa-ticket text-lg"></i>
 
@@ -51,16 +58,14 @@
                     @endif
                 </a>
 
-                <!-- ===== USER DROPDOWN ===== -->
+                <!-- USER MENU -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open"
                         class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                               hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition"
-                        title="User Menu">
+                               hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition">
                         <i class="fa-solid fa-user text-lg"></i>
                     </button>
 
-                    <!-- DROPDOWN -->
                     <div x-show="open" @click.away="open=false" x-transition
                         class="absolute right-0 mt-2 w-44 bg-gray-900 p-3 rounded-lg
                                shadow-lg border border-gray-700 z-50">
@@ -78,30 +83,28 @@
                 </div>
 
             @else
-                <!-- ===== ICON TIKET (BELUM LOGIN) ===== -->
+                <!-- ICON TIKET -->
                 <a href="{{ route('login') }}"
                    class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                          hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition"
-                   title="Login untuk melihat tiket">
+                          hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition">
                     <i class="fa-solid fa-ticket text-lg"></i>
                 </a>
 
-                <!-- ===== ICON USER (BUKA MODAL LOGIN) ===== -->
+                <!-- ICON USER -->
                 <button @click="openLogin = true"
                     class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                           hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition"
-                    title="Login">
+                           hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition">
                     <i class="fa-solid fa-user text-lg"></i>
                 </button>
             @endauth
         </div>
     </div>
 
-    <!-- ====================== MODAL LOGIN ====================== -->
+    <!-- ================= MODAL LOGIN ================= -->
     <div x-show="openLogin" x-transition.opacity
         class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
 
-        <div @click.away="openLogin = false" x-transition.scale.origin.top.duration.300ms
+        <div @click.away="openLogin = false" x-transition.scale
             class="bg-gray-900 w-80 p-6 rounded-xl shadow-lg">
 
             <h2 class="text-xl font-bold mb-4">Login</h2>
@@ -137,17 +140,15 @@
     </div>
 </nav>
 
+<!-- ================= CONTENT ================= -->
+<main class="min-h-screen">
+    @yield('content')
+</main>
 
-    <!-- ====================== CONTENT ====================== -->
-    <main class="min-h-screen">
-        @yield('content')
-    </main>
-
-    <!-- ====================== FOOTER ====================== -->
-    <footer class="bg-gray-800 text-center py-5 mt-10">
-        <p class="text-gray-400">© 2025 CineMagic</p>
-    </footer>
+<!-- ================= FOOTER ================= -->
+<footer class="bg-gray-800 text-center py-5 mt-10">
+    <p class="text-gray-400">© 2026 Cinema</p>
+</footer>
 
 </body>
-
 </html>
