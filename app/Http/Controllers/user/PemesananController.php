@@ -21,6 +21,8 @@ class PemesananController extends Controller
             ->latest()
             ->get();
 
+        session(['last_view_payment' => now()]);
+
         return view('user.pemesanans.index', compact('pemesanans'));
     }
 
