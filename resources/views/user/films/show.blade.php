@@ -117,9 +117,17 @@
                             @foreach ($filtered as $jadwal)
                                 @php
                                     $total = $jadwal->studio->kursi->count();
-                                    $booked = $jadwal->pemesanan()->count();
+
+                                    $booked = $jadwal
+                                        ->pemesanan()
+                                        ->whereHas('pembayaran', fn($q) => $q->where('status', 'paid'))
+                                        ->withCount('kursi') // menghitung jumlah kursi per pemesanan
+                                        ->get()
+                                        ->sum('kursi_count'); // total seluruh kursi yang dipesan
+
                                     $available = $total - $booked;
                                 @endphp
+
 
                                 <div class="p-5 rounded-xl bg-gray-900 border border-gray-800">
                                     <p class="font-bold">
@@ -138,9 +146,9 @@
                                         @else
                                             Kursi tersedia:
                                             <span class="font-bold text-emerald-400">
-                                                {{ $jadwal->available_seats }}
+                                                {{ $available }}
                                             </span>
-                                            / {{ $jadwal->studio->kursi->count() }}
+                                            / {{ $total }}
                                         @endif
                                     </p>
 

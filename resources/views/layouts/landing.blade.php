@@ -18,7 +18,14 @@
 <body class="bg-gray-900 text-white">
 
 <!-- ====================== NAVBAR ====================== -->
-<nav class="bg-gray-800 py-4" x-data="{ openLogin: false }">
+<nav class="bg-gray-800 py-4"
+     x-data="{ openLogin: false }"
+     x-init="
+        @if($errors->any())
+            openLogin = true
+        @endif
+     "
+>
     <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
 
         <!-- LOGO -->
@@ -34,17 +41,16 @@
                     $paidUnreadCount = \App\Models\Pemesanan::where('user_id', auth()->id())
                         ->whereHas('pembayaran', function ($q) use ($lastView) {
                             $q->where('status', 'paid');
-
                             if ($lastView) {
                                 $q->where('updated_at', '>', $lastView);
                             }
                         })->count();
                 @endphp
 
-                <!-- RIWAYAT PEMBAYARAN -->
+                <!-- RIWAYAT -->
                 <a href="{{ route('user.pemesanan.index') }}"
                    class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                          hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition">
+                          hover:bg-blue-600 transition">
 
                     <i class="fa-solid fa-ticket text-lg"></i>
 
@@ -59,14 +65,12 @@
                 <!-- USER MENU -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open"
-                        class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                               hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition">
+                        class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-600 transition">
                         <i class="fa-solid fa-user text-lg"></i>
                     </button>
 
                     <div x-show="open" @click.away="open=false" x-transition
-                        class="absolute right-0 mt-2 w-44 bg-gray-900 p-3 rounded-lg
-                               shadow-lg border border-gray-700 z-50">
+                        class="absolute right-0 mt-2 w-44 bg-gray-900 p-3 rounded-lg shadow-lg border border-gray-700 z-50">
 
                         <p class="font-semibold text-sm">{{ Auth::user()->name }}</p>
                         <hr class="my-2 border-gray-700">
@@ -81,50 +85,80 @@
                 </div>
 
             @else
-                <!-- ICON TIKET -->
-                <a href="{{ route('login') }}"
-                   class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                          hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition">
-                    <i class="fa-solid fa-ticket text-lg"></i>
-                </a>
-
                 <!-- ICON USER -->
                 <button @click="openLogin = true"
-                    class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                           hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/40 transition">
+                    class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-600 transition">
                     <i class="fa-solid fa-user text-lg"></i>
                 </button>
             @endauth
+
         </div>
     </div>
 
-    <!-- ================= MODAL LOGIN ================= -->
+    <!-- ================= MODAL AUTH ================= -->
     <div x-show="openLogin" x-transition.opacity
         class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
 
-        <div @click.away="openLogin = false" x-transition.scale
-            class="bg-gray-900 w-80 p-6 rounded-xl shadow-lg">
+        <div x-data="{ tab: '{{ $errors->has('name') ? 'register' : 'login' }}' }"
+             @click.away="openLogin = false"
+             x-transition.scale
+             class="bg-gray-900 w-96 p-6 rounded-xl shadow-lg">
 
-            <h2 class="text-xl font-bold mb-4">Login</h2>
+            <!-- Tabs -->
+            <div class="flex mb-4 border-b border-gray-700">
+                <button @click="tab='login'"
+                    :class="tab=='login' ? 'border-blue-500 text-blue-400' : 'text-gray-400'"
+                    class="flex-1 pb-2 border-b-2 font-semibold">
+                    Login
+                </button>
+                <button @click="tab='register'"
+                    :class="tab=='register' ? 'border-blue-500 text-blue-400' : 'text-gray-400'"
+                    class="flex-1 pb-2 border-b-2 font-semibold">
+                    Register
+                </button>
+            </div>
 
-            <form action="{{ route('login') }}" method="POST">
+            <!-- LOGIN FORM -->
+            <form x-show="tab=='login'" action="{{ route('login') }}" method="POST">
                 @csrf
+                <input name="email" type="email" placeholder="Email"
+                       class="w-full mb-3 px-3 py-2 rounded bg-gray-800 border border-gray-700">
+                @error('email') <p class="text-red-400 text-sm mb-2">{{ $message }}</p> @enderror
 
-                <label class="text-sm">Email</label>
-                <input type="email" name="email"
-                    class="w-full mt-1 mb-3 px-3 py-2 rounded bg-gray-800 border border-gray-700">
+                <input name="password" type="password" placeholder="Password"
+                       class="w-full mb-4 px-3 py-2 rounded bg-gray-800 border border-gray-700">
+                @error('password') <p class="text-red-400 text-sm mb-2">{{ $message }}</p> @enderror
 
-                <label class="text-sm">Password</label>
-                <input type="password" name="password"
-                    class="w-full mt-1 mb-4 px-3 py-2 rounded bg-gray-800 border border-gray-700">
-
-                <button class="w-full py-2 bg-blue-600 rounded-lg hover:bg-blue-500 font-semibold">
+                <button class="w-full py-2 rounded font-semibold bg-blue-600 hover:bg-blue-500">
                     Login
                 </button>
             </form>
 
-            <button @click="openLogin = false"
-                class="mt-4 w-full py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
+            <!-- REGISTER FORM -->
+            <form x-show="tab=='register'" action="{{ route('register') }}" method="POST">
+                @csrf
+                <input name="name" type="text" placeholder="Nama Lengkap"
+                       class="w-full mb-3 px-3 py-2 rounded bg-gray-800 border border-gray-700">
+                @error('name') <p class="text-red-400 text-sm mb-2">{{ $message }}</p> @enderror
+
+                <input name="email" type="email" placeholder="Email"
+                       class="w-full mb-3 px-3 py-2 rounded bg-gray-800 border border-gray-700">
+                @error('email') <p class="text-red-400 text-sm mb-2">{{ $message }}</p> @enderror
+
+                <input name="password" type="password" placeholder="Password"
+                       class="w-full mb-3 px-3 py-2 rounded bg-gray-800 border border-gray-700">
+                @error('password') <p class="text-red-400 text-sm mb-2">{{ $message }}</p> @enderror
+
+                <input name="password_confirmation" type="password" placeholder="Confirm Password"
+                       class="w-full mb-4 px-3 py-2 rounded bg-gray-800 border border-gray-700">
+
+                <button class="w-full py-2 rounded font-semibold bg-green-600 hover:bg-green-500">
+                    Register
+                </button>
+            </form>
+
+            <button @click="openLogin=false"
+                class="mt-3 w-full py-2 bg-gray-700 rounded hover:bg-gray-600">
                 Tutup
             </button>
         </div>
