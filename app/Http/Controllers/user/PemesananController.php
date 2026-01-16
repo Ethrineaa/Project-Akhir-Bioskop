@@ -114,7 +114,7 @@ class PemesananController extends Controller
 
             $snapToken = \Midtrans\Snap::getSnapToken([
                 'transaction_details' => [
-                    'order_id'     => 'ORDER-' . $pemesanan->id,
+                    'order_id'     => 'ORDER-' . $pemesanan->id . '_' . time(),
                     'gross_amount' => $totalHarga,
                 ],
                 'customer_details' => [
