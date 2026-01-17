@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Studio;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -27,6 +28,12 @@ class DatabaseSeeder extends Seeder
             'email' => 'hafidz@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'user',
+        ]);
+
+        $this->call([
+            StudioSeeder::class,
+            KursiSeeder::class,
+            GenreSeeder::class,
         ]);
     }
 }
