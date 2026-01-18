@@ -38,7 +38,7 @@ class JadwalController extends Controller
         $request->validate([
             'film_id' => 'required|exists:films,id',
             'studio_id' => 'required|exists:studios,id',
-            'tanggal' => 'required|date',
+            'tanggal' => 'required|date|after_or_equal:today',
             'jam' => 'required',
         ]);
 
@@ -92,7 +92,7 @@ class JadwalController extends Controller
         $request->validate([
             'film_id' => 'required|exists:films,id',
             'studio_id' => 'required|exists:studios,id',
-            'tanggal' => 'required|date',
+            'tanggal' => 'required|date|after_or_equal:today',
             'jam' => 'required',
         ]);
 
