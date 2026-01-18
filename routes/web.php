@@ -57,6 +57,7 @@ Route::prefix('user')
 
         Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi']);
         Route::post('/pemesanan/checkout', [PemesananController::class, 'checkout'])->name('pemesanan.checkout');
+        Route::get('/pemesanan/{pemesanan}/kursi', [PemesananController::class, 'layoutKursi'])->name('pemesanan.kursi');
     });
 
 /*

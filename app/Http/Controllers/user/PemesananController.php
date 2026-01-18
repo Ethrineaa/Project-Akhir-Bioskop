@@ -8,6 +8,7 @@ use App\Models\Jadwal;
 use App\Models\Kursi;
 use App\Models\Pemesanan;
 use App\Models\Pembayaran;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,11 +17,13 @@ class PemesananController extends Controller
 {
     public function index()
     {
-        auth()
-            ->user()
-            ->update([
+        /** @var User $user */
+        $user = Auth::user();
+        if ($user) {
+            $user->update([
                 'last_view_payment' => now(),
             ]);
+        }
 
         $pemesanans = Pemesanan::with(['jadwal.film', 'pembayaran'])
             ->where('user_id', Auth::id())
@@ -28,6 +31,28 @@ class PemesananController extends Controller
             ->get();
 
         return view('user.pemesanans.index', compact('pemesanans'));
+    }
+
+    public function show(Pemesanan $pemesanan)
+    {
+        $pemesanan->load(['jadwal.film.genre', 'jadwal.studio', 'kursi']);
+        return view('user.pemesanans.show', compact('pemesanan'));
+    }
+
+    public function layoutKursi(Pemesanan $pemesanan)
+    {
+        $jadwal = $pemesanan->jadwal;
+
+        // semua kursi di studio
+        $kursi = Kursi::where('studio_id', $jadwal->studio_id)->get();
+
+        // kursi yang SUDAH dipesan di jadwal ini (oleh semua orang)
+        $kursiTerpesan = DB::table('kursi_pemesanan')->join('pemesanans', 'pemesanans.id', '=', 'kursi_pemesanan.pemesanan_id')->where('pemesanans.jadwal_id', $jadwal->id)->pluck('kursi_pemesanan.kursi_id')->toArray();
+
+        // kursi khusus pemesanan ini
+        $kursiPemesanan = $pemesanan->kursi->pluck('id')->toArray();
+
+        return view('user.pemesanans.kursi', compact('pemesanan', 'kursi', 'kursiTerpesan', 'kursiPemesanan'));
     }
 
     /**

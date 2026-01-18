@@ -80,6 +80,11 @@
                                             -
                                         @endforelse
                                     </p>
+
+                                    <a href="{{ route('user.pemesanan.show', $pemesanan->id) }}"
+                                        class="inline-block mt-3 px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
+                                        Detail Tiket
+                                    </a>
                                 </div>
 
                                 <!-- Harga -->
@@ -90,7 +95,7 @@
 
                                     <span
                                         class="inline-block mt-2 px-2 py-1 text-xs font-medium
-                                         rounded-full bg-green-500/20 text-green-300">
+                                        rounded-full bg-green-500/20 text-green-300">
                                         Paid
                                     </span>
                                 </div>
