@@ -61,9 +61,8 @@ class GenreController extends Controller
     {
         $genre = Genre::findOrFail($id);
 
-        // Cek relasi film
-        if ($genre->films()->count() > 0) {
-            return redirect()->route('admin.genre.index')->with('error', 'Genre tidak bisa dihapus karena masih digunakan oleh film.');
+        if ($genre->film()->count() > 0) {
+            return redirect()->route('admin.genre.index')->with('error', 'Genre tidak bisa dihapus karena masih ada film.');
         }
 
         $genre->delete();

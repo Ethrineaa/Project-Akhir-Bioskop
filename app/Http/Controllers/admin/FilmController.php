@@ -12,7 +12,7 @@ class FilmController extends Controller
     protected $title = 'Film';
     public function index()
     {
-        $title = "Film";
+        $title = 'Film';
         $films = Film::with('genre')->orderBy('id', 'DESC')->get();
         return view('admin.film.index', compact('films', 'title'));
     }
@@ -31,7 +31,7 @@ class FilmController extends Controller
             'durasi' => 'required|numeric',
             'harga' => 'required|numeric',
             'genre_id' => 'required|exists:genres,id',
-            'poster' => 'image|mimes:jpg,jpeg,png|max:2048'
+            'poster' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $posterName = null;
@@ -46,7 +46,7 @@ class FilmController extends Controller
             'durasi' => $request->durasi,
             'harga' => $request->harga,
             'genre_id' => $request->genre_id,
-            'poster' => $posterName
+            'poster' => $posterName,
         ]);
 
         return redirect()->route('admin.film.index')->with('success', 'Film berhasil ditambahkan');
@@ -66,7 +66,7 @@ class FilmController extends Controller
             'durasi' => 'required|numeric',
             'harga' => 'required|numeric',
             'genre_id' => 'required|exists:genres,id',
-            'poster' => 'image|mimes:jpg,jpeg,png|max:2048'
+            'poster' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $posterName = $film->poster;
@@ -86,7 +86,7 @@ class FilmController extends Controller
             'durasi' => $request->durasi,
             'harga' => $request->harga,
             'genre_id' => $request->genre_id,
-            'poster' => $posterName
+            'poster' => $posterName,
         ]);
 
         return redirect()->route('admin.film.index')->with('success', 'Film berhasil diperbarui');
@@ -94,12 +94,16 @@ class FilmController extends Controller
 
     public function destroy(Film $film)
     {
+        if ($film->jadwal()->exists()) {
+            return redirect()->route('admin.film.index')->with('error', 'Film tidak bisa dihapus karena masih memiliki jadwal tayang');
+        }
+
         if ($film->poster && file_exists(public_path('posters/' . $film->poster))) {
             unlink(public_path('posters/' . $film->poster));
         }
 
         $film->delete();
 
-        return redirect()->route('admin.film.index')->with('success', 'Film berhasil dihapus');
+        return redirect()->route('admin.film.index')->with('success', 'Film dan poster berhasil dihapus');
     }
 }

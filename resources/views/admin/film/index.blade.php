@@ -79,28 +79,48 @@
 
 
 @section('js')
-    <script>
-        $(document).ready(function() {
-            $('#datatable').DataTable();
-        });
+   <script>
+    $(document).ready(function() {
+        $('#datatable').DataTable();
 
-        function confirmDelete(id) {
+        // ✅ SweetAlert sukses
+        @if(session('success'))
             swal({
-                    title: "Apakah Anda yakin?",
-                    text: "Data ini tidak bisa dikembalikan!",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        $('#deleteForm' + id).submit();
-                    } else {
-                        swal("Data tidak jadi dihapus.", {
-                            icon: "error"
-                        });
-                    }
+                title: "Berhasil!",
+                text: "{{ session('success') }}",
+                icon: "success",
+                button: "OK"
+            });
+        @endif
+
+
+        @if(session('error'))
+            swal({
+                title: "Gagal!",
+                text: "{{ session('error') }}",
+                icon: "error",
+                button: "OK"
+            });
+        @endif
+    });
+
+    function confirmDelete(id) {
+        swal({
+            title: "Apakah anda yakin?",
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                $('#deleteForm' + id).submit();
+            } else {
+                swal("Data tidak jadi dihapus!", {
+                    icon: "info"
                 });
-        }
-    </script>
+            }
+        });
+    }
+</script>
 @endsection

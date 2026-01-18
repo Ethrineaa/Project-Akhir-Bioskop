@@ -75,7 +75,7 @@ class StudioController extends Controller
     {
         $studio = Studio::findOrFail($id);
 
-        if ($studio->kursis()->count() > 0) {
+        if ($studio->kursi()->count() > 0) {
             return redirect()->route('admin.studio.index')->with('error', 'Studio tidak bisa dihapus karena masih memiliki kursi.');
         }
 

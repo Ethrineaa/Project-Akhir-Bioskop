@@ -80,7 +80,7 @@
             });
         @endif
 
-        // ✅ SweetAlert error (genre gagal dihapus karena relasi)
+       
         @if(session('error'))
             swal({
                 title: "Gagal!",
@@ -110,6 +110,4 @@
         });
     }
 </script>
-@endsection
-
 @endsection
