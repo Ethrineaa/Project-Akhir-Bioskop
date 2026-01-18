@@ -63,12 +63,32 @@
     <script>
         $(document).ready(function() {
             $('#datatable').DataTable();
+
+            // ✅ SweetAlert sukses
+            @if (session('success'))
+                swal({
+                    title: "Berhasil!",
+                    text: "{{ session('success') }}",
+                    icon: "success",
+                    button: "OK"
+                });
+            @endif
+
+            // ✅ SweetAlert error (genre gagal dihapus karena relasi)
+            @if (session('error'))
+                swal({
+                    title: "Gagal!",
+                    text: "{{ session('error') }}",
+                    icon: "error",
+                    button: "OK"
+                });
+            @endif
         });
 
         function confirmDelete(id) {
             swal({
-                    title: "Yakin hapus jadwal?",
-                    text: "Data ini tidak bisa dipulihkan setelah dihapus!",
+                    title: "Apakah anda yakin?",
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
                     icon: "warning",
                     buttons: true,
                     dangerMode: true,
@@ -76,6 +96,10 @@
                 .then((willDelete) => {
                     if (willDelete) {
                         $('#deleteForm' + id).submit();
+                    } else {
+                        swal("Data tidak jadi dihapus!", {
+                            icon: "info"
+                        });
                     }
                 });
         }
