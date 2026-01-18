@@ -3,6 +3,14 @@
 @section('content')
 <div class="max-w-5xl mx-auto mt-10">
 
+    <!-- BUTTON KEMBALI KE RIWAYAT -->
+    <div class="mb-6">
+        <a href="{{ route('user.pemesanan.index') }}"
+           class="inline-block bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow">
+           &larr; Kembali ke Riwayat
+        </a>
+    </div>
+
     <div class="bg-gray-900 rounded-2xl shadow-xl overflow-hidden flex">
 
         <!-- POSTER -->
@@ -92,7 +100,7 @@
                     </div>
                 </div>
 
-                <!-- BUTTON -->
+                <!-- BUTTON LAYOUT KURSI -->
                 <a href="{{ route('user.pemesanan.kursi', $pemesanan->id) }}"
                    class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-lg text-sm font-semibold shadow">
                      Layout Kursi
