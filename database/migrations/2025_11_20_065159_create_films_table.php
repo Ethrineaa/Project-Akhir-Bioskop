@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->text('sinopsis');
             $table->integer('durasi');
             $table->integer('harga');
-            $table->foreignId('genre_id')->constrained('genres')->cascadeOnDelete();
+            $table->foreignId('genre_id')->constrained('genres')->restrictOnDelete();
             $table->string('poster')->nullable();
             $table->timestamps();
         });

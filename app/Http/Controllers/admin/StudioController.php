@@ -16,7 +16,7 @@ class StudioController extends Controller
         $title = 'Studio';
 
         // Ambil studio sekaligus hitung jumlah kursi
-        $studios = Studio::withCount('kursi')->orderBy('id','DESC')->get();
+        $studios = Studio::withCount('kursi')->orderBy('id', 'DESC')->get();
 
         return view('admin.studio.index', compact('studios', 'title'));
     }
@@ -37,11 +37,10 @@ class StudioController extends Controller
         Studio::create([
             'nama' => $request->nama,
             'layout' => $request->layout,
-            'kapasitas' => 0 // default 0, nanti berubah otomatis
+            'kapasitas' => 0, // default 0, nanti berubah otomatis
         ]);
 
-        return redirect()->route('admin.studio.index')
-            ->with('success', 'Studio berhasil ditambahkan, jangan lupa tambah kursi!');
+        return redirect()->route('admin.studio.index')->with('success', 'Studio berhasil ditambahkan, jangan lupa tambah kursi!');
     }
 
     public function edit(Studio $studio)
@@ -69,15 +68,19 @@ class StudioController extends Controller
         $studio->kapasitas = $studio->kursi()->count();
         $studio->save();
 
-        return redirect()->route('admin.studio.index')
-            ->with('success', 'Studio berhasil diperbarui!');
+        return redirect()->route('admin.studio.index')->with('success', 'Studio berhasil diperbarui!');
     }
 
-    public function destroy(Studio $studio)
+    public function destroy($id)
     {
+        $studio = Studio::findOrFail($id);
+
+        if ($studio->kursis()->count() > 0) {
+            return redirect()->route('admin.studio.index')->with('error', 'Studio tidak bisa dihapus karena masih memiliki kursi.');
+        }
+
         $studio->delete();
 
-        return redirect()->route('admin.studio.index')
-            ->with('success', 'Studio berhasil dihapus!');
+        return redirect()->route('admin.studio.index')->with('success', 'Studio berhasil dihapus.');
     }
 }

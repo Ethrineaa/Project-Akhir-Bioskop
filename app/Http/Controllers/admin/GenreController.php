@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Genre;
+use App\Models\Film;
 use Illuminate\Http\Request;
 
 class GenreController extends Controller
 {
-    protected $title = "Genre";
-    
+    protected $title = 'Genre';
+
     public function index()
     {
         $genres = Genre::all();
@@ -59,6 +60,12 @@ class GenreController extends Controller
     public function destroy($id)
     {
         $genre = Genre::findOrFail($id);
+
+        // Cek relasi film
+        if ($genre->films()->count() > 0) {
+            return redirect()->route('admin.genre.index')->with('error', 'Genre tidak bisa dihapus karena masih digunakan oleh film.');
+        }
+
         $genre->delete();
 
         return redirect()->route('admin.genre.index')->with('success', 'Genre berhasil dihapus');

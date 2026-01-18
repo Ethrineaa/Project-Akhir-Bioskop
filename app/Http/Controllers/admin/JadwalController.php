@@ -128,12 +128,15 @@ class JadwalController extends Controller
         return redirect()->route('admin.jadwal.index')->with('success', 'Jadwal berhasil diperbarui!');
     }
 
-    public function destroy(Jadwal $jadwal)
+    public function destroy($id)
     {
-        $jadwal->delete();
+        $film = Film::findOrFail($id);
 
-        return redirect()->route('admin.jadwal.index')->with('success', 'Jadwal berhasil dihapus!');
+        if ($film->jadwals()->count() > 0) {
+            return back()->with('error', 'Film tidak bisa dihapus karena masih memiliki jadwal tayang.');
+        }
+
+        $film->delete();
+        return back()->with('success', 'Film berhasil dihapus.');
     }
-    //inininin
-    //3u3g4233uwh4h3u4h
 }

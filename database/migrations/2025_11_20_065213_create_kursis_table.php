@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('kursis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('studio_id')->constrained('studios')->cascadeOnDelete();
+            $table->foreignId('studio_id')->constrained('studios')->restrictOnDelete();
             $table->string('nomor_kursi');
             $table->timestamps();
         });

@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('jadwals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('film_id')->constrained('films')->cascadeOnDelete();
-            $table->foreignId('studio_id')->constrained('studios')->cascadeOnDelete();
+            $table->foreignId('film_id')->constrained('films')->restrictOnDelete();
+            $table->foreignId('studio_id')->constrained('studios')->restrictOnDelete();
             $table->date('tanggal');
             $table->time('jam');
             $table->timestamps();
