@@ -154,10 +154,18 @@
 
 
 
-                                    <a href="{{ route('user.kursi.index', $jadwal->id) }}"
-                                        class="block mt-4 text-center bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg">
-                                        Pesan Tiket
-                                    </a>
+                                    @auth
+                                        <a href="{{ route('user.kursi.index', $jadwal->id) }}"
+                                            class="block mt-4 text-center bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg">
+                                            Pesan Tiket
+                                        </a>
+                                    @else
+                                        <button @click="openLogin = true"
+                                            class="w-full mt-4 text-center bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg">
+                                            Pesan Tiket
+                                        </button>
+                                    @endauth
+
                                 </div>
                             @endforeach
                         </div>

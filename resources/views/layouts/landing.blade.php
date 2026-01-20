@@ -93,82 +93,113 @@
             </div>
         </div>
 
-        <!-- ================= MODAL AUTH ================= -->
-        <div x-show="openLogin" x-transition.opacity
-            class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+       <!-- ================= MODAL AUTH ================= -->
+<div x-show="openLogin" x-transition.opacity
+    class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
 
-            <div x-data="{ tab: '{{ $errors->has('name') ? 'register' : 'login' }}' }" @click.away="openLogin = false" x-transition.scale
-                class="bg-gray-900 w-96 p-6 rounded-xl shadow-lg">
+    <div x-data="{ tab: '{{ $errors->has('name') ? 'register' : 'login' }}' }"
+         @click.away="openLogin = false"
+         x-transition.scale
+         class="bg-gradient-to-br from-gray-900 to-gray-800 w-[380px] p-6 rounded-2xl shadow-2xl border border-gray-700">
 
-                <!-- Tabs -->
-                <div class="flex mb-4 border-b border-gray-700">
-                    <button @click="tab='login'"
-                        :class="tab == 'login' ? 'border-blue-500 text-blue-400' : 'text-gray-400'"
-                        class="flex-1 pb-2 border-b-2 font-semibold">
-                        Login
-                    </button>
-                    <button @click="tab='register'"
-                        :class="tab == 'register' ? 'border-blue-500 text-blue-400' : 'text-gray-400'"
-                        class="flex-1 pb-2 border-b-2 font-semibold">
-                        Register
-                    </button>
-                </div>
-
-                <!-- LOGIN FORM -->
-                <form x-show="tab=='login'" action="{{ route('login') }}" method="POST">
-                    @csrf
-                    <input name="email" type="email" placeholder="Email"
-                        class="w-full mb-3 px-3 py-2 rounded bg-gray-800 border border-gray-700">
-                    @error('email')
-                        <p class="text-red-400 text-sm mb-2">{{ $message }}</p>
-                    @enderror
-
-                    <input name="password" type="password" placeholder="Password"
-                        class="w-full mb-4 px-3 py-2 rounded bg-gray-800 border border-gray-700">
-                    @error('password')
-                        <p class="text-red-400 text-sm mb-2">{{ $message }}</p>
-                    @enderror
-
-                    <button class="w-full py-2 rounded font-semibold bg-blue-600 hover:bg-blue-500">
-                        Login
-                    </button>
-                </form>
-
-                <!-- REGISTER FORM -->
-                <form x-show="tab=='register'" action="{{ route('register') }}" method="POST">
-                    @csrf
-                    <input name="name" type="text" placeholder="Nama Lengkap"
-                        class="w-full mb-3 px-3 py-2 rounded bg-gray-800 border border-gray-700">
-                    @error('name')
-                        <p class="text-red-400 text-sm mb-2">{{ $message }}</p>
-                    @enderror
-
-                    <input name="email" type="email" placeholder="Email"
-                        class="w-full mb-3 px-3 py-2 rounded bg-gray-800 border border-gray-700">
-                    @error('email')
-                        <p class="text-red-400 text-sm mb-2">{{ $message }}</p>
-                    @enderror
-
-                    <input name="password" type="password" placeholder="Password"
-                        class="w-full mb-3 px-3 py-2 rounded bg-gray-800 border border-gray-700">
-                    @error('password')
-                        <p class="text-red-400 text-sm mb-2">{{ $message }}</p>
-                    @enderror
-
-                    <input name="password_confirmation" type="password" placeholder="Confirm Password"
-                        class="w-full mb-4 px-3 py-2 rounded bg-gray-800 border border-gray-700">
-
-                    <button class="w-full py-2 rounded font-semibold bg-green-600 hover:bg-green-500">
-                        Register
-                    </button>
-                </form>
-
-                <button @click="openLogin=false" class="mt-3 w-full py-2 bg-gray-700 rounded hover:bg-gray-600">
-                    Tutup
-                </button>
-            </div>
+        <!-- HEADER -->
+        <div class="text-center mb-5">
+            <h2 class="text-2xl font-bold tracking-wide">Welcome to Cinema</h2>
+            <p class="text-sm text-gray-400">Login or create new account</p>
         </div>
-    </nav>
+
+        <!-- Tabs -->
+        <div class="flex mb-5 bg-gray-800 rounded-lg p-1">
+            <button @click="tab='login'"
+                :class="tab=='login' ? 'bg-blue-600 text-white' : 'text-gray-400'"
+                class="flex-1 py-2 rounded-md text-sm font-semibold transition">
+                Login
+            </button>
+            <button @click="tab='register'"
+                :class="tab=='register' ? 'bg-green-600 text-white' : 'text-gray-400'"
+                class="flex-1 py-2 rounded-md text-sm font-semibold transition">
+                Register
+            </button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form x-show="tab=='login'" action="{{ route('login') }}" method="POST" class="space-y-3">
+            @csrf
+
+            <div class="relative">
+                <i class="fa fa-envelope absolute left-3 top-3 text-gray-500"></i>
+                <input name="email" type="email" placeholder="Email"
+                    class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+            @error('email')
+                <p class="text-red-400 text-xs">{{ $message }}</p>
+            @enderror
+
+            <div class="relative">
+                <i class="fa fa-lock absolute left-3 top-3 text-gray-500"></i>
+                <input name="password" type="password" placeholder="Password"
+                    class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+            @error('password')
+                <p class="text-red-400 text-xs">{{ $message }}</p>
+            @enderror
+
+            <button class="w-full py-2 rounded-lg font-semibold bg-blue-600 hover:bg-blue-500 transition">
+                Login
+            </button>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form x-show="tab=='register'" action="{{ route('register') }}" method="POST" class="space-y-3">
+            @csrf
+
+            <div class="relative">
+                <i class="fa fa-user absolute left-3 top-3 text-gray-500"></i>
+                <input name="name" type="text" placeholder="Full Name"
+                    class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:border-green-500 focus:ring-1 focus:ring-green-500">
+            </div>
+            @error('name')
+                <p class="text-red-400 text-xs">{{ $message }}</p>
+            @enderror
+
+            <div class="relative">
+                <i class="fa fa-envelope absolute left-3 top-3 text-gray-500"></i>
+                <input name="email" type="email" placeholder="Email"
+                    class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:border-green-500 focus:ring-1 focus:ring-green-500">
+            </div>
+            @error('email')
+                <p class="text-red-400 text-xs">{{ $message }}</p>
+            @enderror
+
+            <div class="relative">
+                <i class="fa fa-lock absolute left-3 top-3 text-gray-500"></i>
+                <input name="password" type="password" placeholder="Password"
+                    class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:border-green-500 focus:ring-1 focus:ring-green-500">
+            </div>
+            @error('password')
+                <p class="text-red-400 text-xs">{{ $message }}</p>
+            @enderror
+
+            <div class="relative">
+                <i class="fa fa-lock absolute left-3 top-3 text-gray-500"></i>
+                <input name="password_confirmation" type="password" placeholder="Confirm Password"
+                    class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700">
+            </div>
+
+            <button class="w-full py-2 rounded-lg font-semibold bg-green-600 hover:bg-green-500 transition">
+                Register
+            </button>
+        </form>
+
+        <!-- CLOSE -->
+        <button @click="openLogin=false"
+            class="mt-4 w-full py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition text-sm">
+            Close
+        </button>
+
+    </div>
+</div>
+
 
     <!-- ================= CONTENT ================= -->
     <main class="min-h-screen">
