@@ -70,7 +70,6 @@
     $(document).ready(function() {
         $('#datatable').DataTable();
 
-        // ✅ SweetAlert sukses
         @if(session('success'))
             swal({
                 title: "Berhasil!",
@@ -80,7 +79,7 @@
             });
         @endif
 
-       
+
         @if(session('error'))
             swal({
                 title: "Gagal!",
