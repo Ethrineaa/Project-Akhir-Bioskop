@@ -13,7 +13,6 @@ class AdminDashboardController extends Controller
         $chartLabels = [];
         $chartData = [];
 
-        // ====== GRAFIK 7 HARI ======
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('Y-m-d');
 
@@ -27,19 +26,16 @@ class AdminDashboardController extends Controller
             $chartData[] = $total;
         }
 
-        // ====== TOTAL TIKET TERJUAL ======
         $tiketTerjual = Pemesanan::whereHas('pembayaran', function ($q) {
             $q->where('status', 'paid');
         })->count();
 
-        // ====== TOTAL PENJUALAN BULAN INI ======
         $penjualanBulanIni = Pemesanan::whereMonth('created_at', now()->month)
             ->whereHas('pembayaran', function ($q) {
                 $q->where('status', 'paid');
             })
             ->sum('total_harga');
 
-        // ====== FILM TAYANG HARI INI ======
         $filmsToday = Film::whereHas('jadwal', function ($q) {
             $q->whereDate('tanggal', now()->toDateString());
         })

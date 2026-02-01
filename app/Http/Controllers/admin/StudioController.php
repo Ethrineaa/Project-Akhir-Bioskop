@@ -15,7 +15,6 @@ class StudioController extends Controller
     {
         $title = 'Studio';
 
-        // Ambil studio sekaligus hitung jumlah kursi
         $studios = Studio::withCount('kursi')->orderBy('id', 'DESC')->get();
 
         return view('admin.studio.index', compact('studios', 'title'));
@@ -33,11 +32,10 @@ class StudioController extends Controller
             'layout' => 'nullable|string',
         ]);
 
-        // kapasitas dihitung otomatis setelah kursi ditambahkan
         Studio::create([
             'nama' => $request->nama,
             'layout' => $request->layout,
-            'kapasitas' => 0, // default 0, nanti berubah otomatis
+            'kapasitas' => 0,
         ]);
 
         return redirect()->route('admin.studio.index')->with('success', 'Studio berhasil ditambahkan, jangan lupa tambah kursi!');
@@ -45,7 +43,6 @@ class StudioController extends Controller
 
     public function edit(Studio $studio)
     {
-        // Hitung kapasitas ter-update
         $studio->kapasitas = $studio->kursi()->count();
 
         return view('admin.studio.edit', compact('studio'));
@@ -58,13 +55,11 @@ class StudioController extends Controller
             'layout' => 'nullable|string',
         ]);
 
-        // Update data studio tanpa kapasitas
         $studio->update([
             'nama' => $request->nama,
             'layout' => $request->layout,
         ]);
 
-        // Update kapasitas berdasarkan jumlah kursi
         $studio->kapasitas = $studio->kursi()->count();
         $studio->save();
 

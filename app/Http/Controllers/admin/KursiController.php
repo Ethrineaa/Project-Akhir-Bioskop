@@ -33,16 +33,13 @@ class KursiController extends Controller
             'nomor_kursi' => 'required|string',
         ]);
 
-        // Tambahkan kursi baru
         Kursi::create([
             'studio_id' => $request->studio_id,
             'nomor_kursi' => $request->nomor_kursi,
         ]);
 
-        // Hitung ulang jumlah kursi untuk studio ini
         $jumlahKursi = Kursi::where('studio_id', $request->studio_id)->count();
 
-        // Update kapasitas studio
         Studio::where('id', $request->studio_id)->update([
             'kapasitas' => $jumlahKursi,
         ]);
@@ -72,10 +69,8 @@ class KursiController extends Controller
     {
         $studioId = $kursi->studio_id;
 
-        // hapus kursi
         $kursi->delete();
 
-        // hitung ulang kapasitas
         $jumlahKursi = Kursi::where('studio_id', $studioId)->count();
 
         Studio::where('id', $studioId)->update([

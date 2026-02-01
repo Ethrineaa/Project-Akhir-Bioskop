@@ -45,29 +45,23 @@ class JadwalController extends Controller
         $film = Film::findOrFail($request->film_id);
         $durasi = $film->durasi; // dalam menit
 
-        // Waktu awal
         $mulai = Carbon::parse($request->tanggal . ' ' . $request->jam);
 
-        // Waktu selesai film (jam mulai + durasi)
         $selesai_film = $mulai->copy()->addMinutes($durasi);
 
-        // Tambah buffer 30 menit
         $selesai_total = $selesai_film->copy()->addMinutes(30);
 
-        // Cek jadwal studio di tanggal yang sama
         $existingSchedules = Jadwal::where('studio_id', $request->studio_id)->where('tanggal', $request->tanggal)->get();
 
         foreach ($existingSchedules as $jadwal) {
             $jadwal_mulai = Carbon::parse($jadwal->tanggal . ' ' . $jadwal->jam);
             $jadwal_selesai = $jadwal_mulai->copy()->addMinutes($jadwal->film->durasi)->addMinutes(30);
 
-            // Cek bentrok
             if ($mulai->between($jadwal_mulai, $jadwal_selesai) || $selesai_total->between($jadwal_mulai, $jadwal_selesai) || $jadwal_mulai->between($mulai, $selesai_total)) {
                 return back()->with('error', 'Jadwal bentrok dengan jadwal lain di studio ini!');
             }
         }
 
-        // Simpan jadwal
         Jadwal::create([
             'film_id' => $request->film_id,
             'studio_id' => $request->studio_id,
@@ -99,13 +93,10 @@ class JadwalController extends Controller
         $film = Film::findOrFail($request->film_id);
         $durasi = $film->durasi;
 
-        // waktu mulai
         $mulai = Carbon::parse($request->tanggal . ' ' . $request->jam);
 
-        // waktu selesai
         $selesai = $mulai->copy()->addMinutes($durasi + 30);
 
-        // cek bentrok, kecuali jadwal yg sedang diedit
         $existing = Jadwal::where('studio_id', $request->studio_id)->where('tanggal', $request->tanggal)->where('id', '!=', $jadwal->id)->get();
 
         foreach ($existing as $j) {
@@ -117,7 +108,6 @@ class JadwalController extends Controller
             }
         }
 
-        // update jadwal
         $jadwal->update([
             'film_id' => $request->film_id,
             'studio_id' => $request->studio_id,

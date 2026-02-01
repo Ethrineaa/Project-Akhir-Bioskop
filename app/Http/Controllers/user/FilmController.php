@@ -10,10 +10,8 @@ class FilmController extends Controller
 {
     public function show($id)
     {
-        // Ambil film + relasi
         $film = Film::with('jadwal.studio.kursi')->findOrFail($id);
 
-        // Hitung kursi tersedia per jadwal
         $film->jadwal->map(function ($jadwal) {
 
             $totalKursi = $jadwal->studio->kursi->count();
@@ -25,7 +23,6 @@ class FilmController extends Controller
                 ->whereIn('pembayaran.status', ['waiting', 'pending', 'paid'])
                 ->count();
 
-            // inject ke object jadwal
             $jadwal->available_seats = $totalKursi - $kursiTerpesan;
 
             return $jadwal;

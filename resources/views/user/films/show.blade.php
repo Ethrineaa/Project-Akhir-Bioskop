@@ -152,8 +152,6 @@
                                         @endif
                                     </p>
 
-
-
                                     @auth
                                         <a href="{{ route('user.kursi.index', $jadwal->id) }}"
                                             class="block mt-4 text-center bg-emerald-600 hover:bg-emerald-500 py-2 rounded-lg">

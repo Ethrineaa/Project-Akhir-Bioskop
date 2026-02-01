@@ -11,9 +11,6 @@ class MidtransController extends Controller
     {
         Log::info('MIDTRANS CALLBACK RECEIVED', $request->all());
 
-        // =========================
-        // VALIDASI SIGNATURE
-        // =========================
         $serverKey = config('midtrans.server_key');
         $signatureKey = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
 
@@ -22,10 +19,6 @@ class MidtransController extends Controller
             return response()->json(['message' => 'Invalid signature'], 403);
         }
 
-        // =========================
-        // AMBIL PEMESANAN ID
-        // order_id = ORDER-12
-        // =========================
         $pemesananId = (int) str_replace('ORDER-', '', $request->order_id);
 
         $pembayaran = Pembayaran::where('pemesanan_id', $pemesananId)->first();
@@ -38,14 +31,10 @@ class MidtransController extends Controller
         $transactionStatus = $request->transaction_status;
         $fraudStatus = $request->fraud_status ?? null;
 
-        // =========================
-        // LOGIC STATUS
-        // =========================
         if ($transactionStatus === 'settlement' || ($transactionStatus === 'capture' && $fraudStatus === 'accept')) {
             $pembayaran->update(['status' => 'paid']);
             Log::info('MIDTRANS PAYMENT SUCCESS', ['pemesanan_id' => $pemesananId, 'status' => 'paid']);
         } elseif (in_array($transactionStatus, ['cancel', 'expire', 'deny'])) {
-            // OPTIONAL: biarkan waiting atau pending
             $pembayaran->update(['status' => 'waiting']);
             Log::info('MIDTRANS PAYMENT FAILED/CANCELLED', ['pemesanan_id' => $pemesananId, 'status' => 'waiting']);
         }

@@ -10,7 +10,6 @@ class UserDashboardController extends Controller
 {
     public function index()
     {
-        // Ambil film beserta relasi genre
         $films = Film::with('genre')->latest()->get();
         $genres = Genre::all();
 

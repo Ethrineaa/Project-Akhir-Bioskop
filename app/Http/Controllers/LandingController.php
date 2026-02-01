@@ -12,11 +12,9 @@ class LandingController extends Controller
     {
         $genres = Genre::all();
 
-        // Jika user memilih genre
         if ($request->genre) {
             $films = Film::where('genre_id', $request->genre)->latest()->get();
         }
-        // Jika All atau tidak memilih apapun
         else {
             $films = Film::latest()->get();
         }

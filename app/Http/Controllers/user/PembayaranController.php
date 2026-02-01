@@ -16,13 +16,11 @@ class PembayaranController extends Controller
     {
         $pemesanan = Pemesanan::findOrFail($id);
 
-        // set midtrans config
         Config::$serverKey = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');
         Config::$isSanitized = config('midtrans.is_sanitized');
         Config::$is3ds = config('midtrans.is_3ds');
 
-        // simpan pembayaran (pending)
         $pembayaran = Pembayaran::firstOrCreate(
             ['pemesanan_id' => $pemesanan->id],
             ['status' => 'pending']
