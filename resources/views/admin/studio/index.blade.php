@@ -56,7 +56,6 @@
 
         </table>
 
-        {{-- ===== MODALS DIPINDAH KE SINI ===== --}}
         @foreach ($studios as $studio)
         <div class="modal fade" id="addKursiModal{{ $studio->id }}" tabindex="-1">
             <div class="modal-dialog">
