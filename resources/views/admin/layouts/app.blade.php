@@ -53,9 +53,6 @@
 
                 if (!wrapper || !toggleBtn) return;
 
-                // ==========================
-                // LOAD SIDEBAR STATE
-                // ==========================
                 const sidebarMode = localStorage.getItem("sidebar-mode");
 
                 if (sidebarMode === "mini") {
@@ -66,9 +63,6 @@
                     wrapper.setAttribute("data-sidebartype", "full");
                 }
 
-                // ==========================
-                // TOGGLE SIDEBAR
-                // ==========================
                 toggleBtn.addEventListener("click", function(e) {
                     e.preventDefault();
 
@@ -88,4 +82,4 @@
 
 </body>
 
-</html>s
+</html>

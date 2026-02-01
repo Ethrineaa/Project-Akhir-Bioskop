@@ -64,7 +64,6 @@
         $(document).ready(function() {
             $('#datatable').DataTable();
 
-            // ✅ SweetAlert sukses
             @if (session('success'))
                 swal({
                     title: "Berhasil!",
@@ -74,7 +73,6 @@
                 });
             @endif
 
-            // ✅ SweetAlert error (genre gagal dihapus karena relasi)
             @if (session('error'))
                 swal({
                     title: "Gagal!",
