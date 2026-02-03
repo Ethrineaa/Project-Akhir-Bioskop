@@ -16,6 +16,7 @@
     </div>
 
     <div class="row g-3">
+
         {{-- INFORMASI PEMESANAN --}}
         <div class="col-md-6">
             <div class="card shadow-sm h-100">
@@ -47,58 +48,60 @@
             </div>
         </div>
 
-        {{-- STATUS PEMBAYARAN --}}
+        {{-- STATUS + KURSI --}}
         <div class="col-md-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header fw-semibold">
-                    Status Pembayaran
+                    Pembayaran & Kursi
                 </div>
-                <div class="card-body d-flex flex-column justify-content-center">
+                <div class="card-body">
 
                     @php
                         $status = $pemesanan->pembayaran->status ?? 'belum';
                     @endphp
 
+                    {{-- STATUS --}}
                     <div class="mb-3">
                         <span class="badge
                             {{ $status === 'success' ? 'bg-success' : ($status === 'pending' ? 'bg-warning text-dark' : 'bg-secondary') }}
-                            fs-6 px-3 py-2">
+                            px-2 py-1">
                             {{ ucfirst($status === 'belum' ? 'Belum Bayar' : $status) }}
                         </span>
+
+                        <div class="mt-1">
+                            @if($pemesanan->pembayaran)
+                                <small class="text-muted">
+                                    Dibayar pada {{ $pemesanan->pembayaran->created_at->format('d M Y H:i') }}
+                                </small>
+                            @else
+                                <small class="text-muted">
+                                    Belum ada transaksi pembayaran
+                                </small>
+                            @endif
+                        </div>
                     </div>
 
-                    @if($pemesanan->pembayaran)
-                        <small class="text-muted">
-                            Dibayar pada:
-                            {{ $pemesanan->pembayaran->created_at->format('d M Y H:i') }}
-                        </small>
-                    @else
-                        <small class="text-muted">
-                            Belum ada transaksi pembayaran
-                        </small>
-                    @endif
+                    <hr>
+
+                    {{-- KURSI --}}
+                    <div>
+                        <small class="text-muted d-block mb-2">Kursi yang dipesan</small>
+
+                        @if ($pemesanan->kursi->count())
+                            @foreach ($pemesanan->kursi as $kursi)
+                                <span class="badge bg-primary me-1 mb-1">
+                                    {{ $kursi->nomor_kursi }}
+                                </span>
+                            @endforeach
+                        @else
+                            <p class="text-muted mb-0">Tidak ada kursi</p>
+                        @endif
+                    </div>
 
                 </div>
             </div>
         </div>
-    </div>
 
-    {{-- KURSI --}}
-    <div class="card shadow-sm mt-4">
-        <div class="card-header fw-semibold">
-            Kursi yang Dipesan
-        </div>
-        <div class="card-body">
-            @if ($pemesanan->kursi->count())
-                @foreach ($pemesanan->kursi as $kursi)
-                    <span class="badge bg-primary px-3 py-2 me-1 mb-1">
-                        {{ $kursi->nomor_kursi }}
-                    </span>
-                @endforeach
-            @else
-                <p class="text-muted mb-0">Tidak ada kursi yang dipesan</p>
-            @endif
-        </div>
     </div>
 
 </div>
