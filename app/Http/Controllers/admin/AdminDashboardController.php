@@ -49,7 +49,7 @@ class AdminDashboardController extends Controller
                 'chartData',
                 'tiketTerjual',
                 'penjualanBulanIni',
-                'filmsToday', // ✅ sekarang dikirim ke blade
+                'filmsToday',
             ),
         );
     }
