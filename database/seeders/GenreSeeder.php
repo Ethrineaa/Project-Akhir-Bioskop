@@ -11,13 +11,10 @@ class GenreSeeder extends Seeder
     {
         $genres = [
             'Action',
-            'Adventure',
-            'Animation',
             'Comedy',
             'Drama',
             'Fantasy',
             'Horror',
-            'Mystery',
             'Romance',
         ];
 

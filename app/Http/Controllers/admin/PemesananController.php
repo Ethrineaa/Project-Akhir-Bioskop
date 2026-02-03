@@ -21,7 +21,7 @@ class PemesananController extends Controller
 
     public function show($id)
     {
-        $pemesanan = \App\Models\Pemesanan::with(['jadwal.film', 'jadwal.studio', 'kursi', 'pembayaran'])->findOrFail($id);
+        $pemesanan = Pemesanan::with(['jadwal.film', 'jadwal.studio', 'kursi', 'pembayaran'])->findOrFail($id);
 
         return view('admin.pemesanan.show', compact('pemesanan'));
     }
