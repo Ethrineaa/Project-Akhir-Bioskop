@@ -20,7 +20,7 @@ class KursiSeeder extends Seeder
             } elseif ($studio->kapasitas == 75) {
                 $rows = ['A','B','C','D','E'];
                 $jumlahPerBaris = 15;
-            } else { // 100
+            } else {
                 $rows = ['A','B','C','D','E','F','G','H','I','J'];
                 $jumlahPerBaris = 10;
             }
