@@ -4,15 +4,9 @@
 <div class="container mt-4">
 
     {{-- HEADER --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h4 class="fw-semibold mb-0">Detail Pemesanan</h4>
-            <small class="text-muted">ID Pemesanan #{{ $pemesanan->id }}</small>
-        </div>
-
-        <a href="{{ route('admin.pemesanan.index') }}" class="btn btn-secondary btn-sm">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+    <div class="mb-4">
+        <h4 class="fw-semibold mb-0">Detail Pemesanan</h4>
+        <small class="text-muted">ID Pemesanan #{{ $pemesanan->id }}</small>
     </div>
 
     <div class="row g-3">
@@ -102,6 +96,13 @@
             </div>
         </div>
 
+    </div>
+
+    {{-- BUTTON KEMBALI --}}
+    <div class="mt-4 text-end">
+        <a href="{{ route('admin.pemesanan.index') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali
+        </a>
     </div>
 
 </div>
