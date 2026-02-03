@@ -9,7 +9,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
-
         <form action="{{ route('admin.jadwal.store') }}" method="POST">
             @csrf
 
