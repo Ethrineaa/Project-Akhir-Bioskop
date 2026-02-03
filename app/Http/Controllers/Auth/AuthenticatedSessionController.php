@@ -22,13 +22,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input
         $credentials = $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ]);
 
-        // Attempt login
         if (!Auth::attempt($credentials, $request->boolean('remember'))) {
             throw ValidationException::withMessages([
                 'email' => 'Email atau password salah.',
@@ -39,18 +37,13 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        // 🔥 ADMIN SELALU MASUK DASHBOARD TANPA INTENDED
         if ($user->role === 'admin') {
             return redirect('/admin/dashboard');
         }
 
-        // 🔥 USER BIASA → intended (hal terakhir)
         return redirect()->intended('/');
     }
 
-    /**
-     * Logout user.
-     */
     public function destroy(Request $request)
     {
         Auth::guard()->logout();
