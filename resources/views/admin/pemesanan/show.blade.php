@@ -3,7 +3,6 @@
 @section('content')
     <div class="container mt-4">
 
-        {{-- HEADER --}}
         <div class="mb-4">
             <h4 class="fw-semibold mb-0">Detail Pemesanan</h4>
             <small class="text-muted">ID Pemesanan #{{ $pemesanan->id }}</small>
@@ -11,7 +10,6 @@
 
         <div class="row g-3">
 
-            {{-- INFORMASI PEMESANAN --}}
             <div class="col-md-6">
                 <div class="card shadow-sm h-100">
                     <div class="card-header fw-semibold">
@@ -42,7 +40,6 @@
                 </div>
             </div>
 
-            {{-- STATUS + KURSI --}}
             <div class="col-md-6">
                 <div class="card shadow-sm h-100">
                     <div class="card-header fw-semibold">
@@ -54,7 +51,6 @@
                             $status = $pemesanan->pembayaran->status ?? 'belum';
                         @endphp
 
-                        {{-- STATUS --}}
                         <div class="mb-3">
                             <span
                                 class="badge
@@ -78,7 +74,6 @@
 
                         <hr>
 
-                        {{-- KURSI --}}
                         <div>
                             <small class="text-muted d-block mb-2">Kursi yang dipesan</small>
 
@@ -98,8 +93,10 @@
             </div>
 
         </div>
-<div class="mb-2">
-        <a href="{{ route('admin.pemesanan.index') }}" class="btn btn-secondary">Kembali</a>
-</div>
+
+        <div class="mt-4 d-flex justify-content-start">
+            <a href="{{ route('admin.pemesanan.index') }}" class="btn btn-secondary">Kembali</a>
+        </div>
+
     </div>
 @endsection
