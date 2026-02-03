@@ -66,47 +66,47 @@
 
 
 @section('js')
-<script>
-    $(document).ready(function() {
-        $('#datatable').DataTable();
+    <script>
+        $(document).ready(function() {
+            $('#datatable').DataTable();
 
-        @if(session('success'))
-            swal({
-                title: "Berhasil!",
-                text: "{{ session('success') }}",
-                icon: "success",
-                button: "OK"
-            });
-        @endif
-
-
-        @if(session('error'))
-            swal({
-                title: "Gagal!",
-                text: "{{ session('error') }}",
-                icon: "error",
-                button: "OK"
-            });
-        @endif
-    });
-
-    function confirmDelete(id) {
-        swal({
-            title: "Apakah anda yakin?",
-            text: "Data yang dihapus tidak dapat dikembalikan!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-            if (willDelete) {
-                $('#deleteForm' + id).submit();
-            } else {
-                swal("Data tidak jadi dihapus!", {
-                    icon: "info"
+            @if (session('success'))
+                swal({
+                    title: "Berhasil!",
+                    text: "{{ session('success') }}",
+                    icon: "success",
+                    button: "OK"
                 });
-            }
+            @endif
+
+
+            @if (session('error'))
+                swal({
+                    title: "Gagal!",
+                    text: "{{ session('error') }}",
+                    icon: "error",
+                    button: "OK"
+                });
+            @endif
         });
-    }
-</script>
+
+        function confirmDelete(id) {
+            swal({
+                    title: "Apakah anda yakin?",
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $('#deleteForm' + id).submit();
+                    } else {
+                        swal("Data tidak jadi dihapus!", {
+                            icon: "info"
+                        });
+                    }
+                });
+        }
+    </script>
 @endsection
