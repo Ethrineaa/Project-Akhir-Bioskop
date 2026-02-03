@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SIMINLAB - {{ $title ?? 'Dashboard' }}</title>
+    <title>ADMIN - {{ $title ?? 'Dashboard' }}</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('template-admin/src/assets/images/logos/favicon.png') }}" />
     <link rel="stylesheet" href="{{ asset('template-admin/src/assets/css/styles.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('template-admin/src/assets/css/custom.css') }}">
