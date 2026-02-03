@@ -52,11 +52,6 @@ class PemesananController extends Controller
         return view('user.pemesanans.kursi', compact('pemesanan', 'kursi', 'kursiTerpesan', 'kursiPemesanan'));
     }
 
-    /**
-     * =========================
-     * PILIH KURSI
-     * =========================
-     */
     public function pilihKursi(Jadwal $jadwal)
     {
         $kursi = Kursi::where('studio_id', $jadwal->studio_id)->get();
@@ -66,11 +61,6 @@ class PemesananController extends Controller
         return view('user.kursi.index', compact('jadwal', 'kursi', 'kursiTerpesan'));
     }
 
-    /**
-     * =========================
-     * CHECKOUT + MIDTRANS
-     * =========================
-     */
     public function checkout(Request $request)
     {
         $request->validate([
