@@ -23,7 +23,7 @@
                     <i class="ti ti-ticket"></i>
                 </div>
                 <div class="stat-info">
-                    <p>Total Tiket Terjual</p>
+                    <p>Total Tiket Terjual Bulan Ini</p>
                     <h3>{{ $tiketTerjual ?? 0 }}</h3>
                 </div>
             </div>

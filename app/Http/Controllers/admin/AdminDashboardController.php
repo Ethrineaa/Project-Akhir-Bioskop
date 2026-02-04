@@ -26,9 +26,12 @@ class AdminDashboardController extends Controller
             $chartData[] = $total;
         }
 
-        $tiketTerjual = Pemesanan::whereHas('pembayaran', function ($q) {
-            $q->where('status', 'paid');
-        })->count();
+        $tiketTerjual = Pemesanan::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->whereHas('pembayaran', function ($q) {
+                $q->where('status', 'paid');
+            })
+            ->count();
 
         $penjualanBulanIni = Pemesanan::whereMonth('created_at', now()->month)
             ->whereHas('pembayaran', function ($q) {
@@ -42,15 +45,6 @@ class AdminDashboardController extends Controller
             ->with('genre')
             ->get();
 
-        return view(
-            'admin.dashboard',
-            compact(
-                'chartLabels',
-                'chartData',
-                'tiketTerjual',
-                'penjualanBulanIni',
-                'filmsToday',
-            ),
-        );
+        return view('admin.dashboard', compact('chartLabels', 'chartData', 'tiketTerjual', 'penjualanBulanIni', 'filmsToday'));
     }
 }

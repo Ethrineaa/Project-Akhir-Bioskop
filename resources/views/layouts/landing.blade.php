@@ -29,10 +29,9 @@
 
                 @auth
                     @php
-                        // ambil waktu terakhir user membuka riwayat dari DATABASE
-                        $lastView = auth()->user()->last_view_payment; // ✅ GANTI BARIS INI
+                        $lastView = auth()->user()->last_view_payment
 
-                        $paidUnreadCount = \App\Models\Pemesanan::where('user_id', auth()->id())
+                        $paidUnreadCount = Pemesanan::where('user_id', auth()->id())
                             ->whereHas('pembayaran', function ($q) use ($lastView) {
                                 $q->where('status', 'paid');
                                 if ($lastView) {
@@ -48,7 +47,7 @@
                     <!-- RIWAYAT -->
                     <a href="{{ route('user.pemesanan.index') }}"
                         class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                          hover:bg-blue-600 transition">
+                            hover:bg-blue-600 transition">
 
                         <i class="fa-solid fa-ticket text-lg"></i>
 
