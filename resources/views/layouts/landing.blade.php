@@ -29,9 +29,9 @@
 
                 @auth
                     @php
-                        $lastView = auth()->user()->last_view_payment
+                        $lastView = auth()->user()->last_view_payment;
 
-                        $paidUnreadCount = Pemesanan::where('user_id', auth()->id())
+                        $paidUnreadCount = \App\Models\Pemesanan::where('user_id', auth()->id())
                             ->whereHas('pembayaran', function ($q) use ($lastView) {
                                 $q->where('status', 'paid');
                                 if ($lastView) {
@@ -47,14 +47,14 @@
                     <!-- RIWAYAT -->
                     <a href="{{ route('user.pemesanan.index') }}"
                         class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                            hover:bg-blue-600 transition">
+                          hover:bg-blue-600 transition">
 
                         <i class="fa-solid fa-ticket text-lg"></i>
 
                         @if ($paidUnreadCount > 0)
                             <span
                                 class="absolute -top-1 -right-1 bg-green-500 text-xs w-5 h-5
-                                     flex items-center justify-center rounded-full font-bold">
+                                        flex items-center justify-center rounded-full font-bold">
                                 {{ $paidUnreadCount }}
                             </span>
                         @endif
