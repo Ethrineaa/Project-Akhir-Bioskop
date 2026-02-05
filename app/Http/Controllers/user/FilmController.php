@@ -5,29 +5,29 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Film;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class FilmController extends Controller
 {
-    public function show($id)
-    {
-        $film = Film::with('jadwal.studio.kursi')->findOrFail($id);
+   public function show($id)
+{
+    $film = Film::with([
+        'jadwal' => function ($query) {
+            $query->whereBetween('tanggal', [
+                Carbon::today(),
+                Carbon::today()->addDays(6)
+            ])->orderBy('tanggal');
+        },
+        'jadwal.studio.kursi'
+    ])->findOrFail($id);
 
-        $film->jadwal->map(function ($jadwal) {
-
-            $totalKursi = $jadwal->studio->kursi->count();
-
-            $kursiTerpesan = DB::table('kursi_pemesanan')
-                ->join('pemesanans', 'pemesanans.id', '=', 'kursi_pemesanan.pemesanan_id')
-                ->join('pembayaran', 'pembayaran.pemesanan_id', '=', 'pemesanans.id')
-                ->where('pemesanans.jadwal_id', $jadwal->id)
-                ->whereIn('pembayaran.status', ['waiting', 'pending', 'paid'])
-                ->count();
-
-            $jadwal->available_seats = $totalKursi - $kursiTerpesan;
-
-            return $jadwal;
-        });
-
-        return view('user.films.show', compact('film'));
+    // BUAT LIST HARI: HARI INI - 7 HARI
+    $days = collect();
+    for ($i = 0; $i < 7; $i++) {
+        $days->push(Carbon::today()->addDays($i)->toDateString());
     }
+
+    return view('user.films.show', compact('film', 'days'));
+}
+
 }

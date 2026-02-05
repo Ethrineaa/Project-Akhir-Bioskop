@@ -15,10 +15,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white flex flex-col min-h-screen">
 
     <!-- ====================== NAVBAR ====================== -->
-    <nav class="bg-gray-800 py-4" x-data="{ openLogin: false }" x-init="@if ($errors->any()) openLogin = true @endif">
+    <nav class="bg-gray-800 py-4" x-data="{ openLogin: false }"
+        x-init="@if ($errors->any()) openLogin = true @endif">
         <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
 
             <!-- LOGO -->
@@ -43,18 +44,14 @@
                             ->sum('kursi_count');
                     @endphp
 
-
                     <!-- RIWAYAT -->
                     <a href="{{ route('user.pemesanan.index') }}"
-                        class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gray-700
-                            hover:bg-blue-600 transition">
-
+                        class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-600 transition">
                         <i class="fa-solid fa-ticket text-lg"></i>
 
                         @if ($paidUnreadCount > 0)
                             <span
-                                class="absolute -top-1 -right-1 bg-green-500 text-xs w-5 h-5
-                                        flex items-center justify-center rounded-full font-bold">
+                                class="absolute -top-1 -right-1 bg-green-500 text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
                                 {{ $paidUnreadCount }}
                             </span>
                         @endif
@@ -69,7 +66,6 @@
 
                         <div x-show="open" @click.away="open=false" x-transition
                             class="absolute right-0 mt-2 w-44 bg-gray-900 p-3 rounded-lg shadow-lg border border-gray-700 z-50">
-
                             <p class="font-semibold text-sm">{{ Auth::user()->name }}</p>
                             <hr class="my-2 border-gray-700">
 
@@ -82,13 +78,11 @@
                         </div>
                     </div>
                 @else
-                    <!-- ICON USER -->
                     <button @click="openLogin = true"
                         class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-blue-600 transition">
                         <i class="fa-solid fa-user text-lg"></i>
                     </button>
                 @endauth
-
             </div>
         </div>
 
@@ -96,112 +90,86 @@
         <div x-show="openLogin" x-transition.opacity
             class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
 
-            <div x-data="{ tab: '{{ $errors->has('name') ? 'register' : 'login' }}' }" @click.away="openLogin = false" x-transition.scale
+            <div x-data="{ tab: '{{ $errors->has('name') ? 'register' : 'login' }}' }"
+                @click.away="openLogin = false" x-transition.scale
                 class="bg-gradient-to-br from-gray-900 to-gray-800 w-[380px] p-6 rounded-2xl shadow-2xl border border-gray-700">
 
-                <!-- HEADER -->
                 <div class="text-center mb-5">
                     <h2 class="text-2xl font-bold tracking-wide">Welcome to Cinema</h2>
                     <p class="text-sm text-gray-400">Login or create new account</p>
                 </div>
 
-                <!-- Tabs -->
                 <div class="flex mb-5 bg-gray-800 rounded-lg p-1">
-                    <button @click="tab='login'" :class="tab == 'login' ? 'bg-blue-600 text-white' : 'text-gray-400'"
+                    <button @click="tab='login'"
+                        :class="tab=='login' ? 'bg-blue-600 text-white' : 'text-gray-400'"
                         class="flex-1 py-2 rounded-md text-sm font-semibold transition">
                         Login
                     </button>
                     <button @click="tab='register'"
-                        :class="tab == 'register' ? 'bg-green-600 text-white' : 'text-gray-400'"
+                        :class="tab=='register' ? 'bg-green-600 text-white' : 'text-gray-400'"
                         class="flex-1 py-2 rounded-md text-sm font-semibold transition">
                         Register
                     </button>
                 </div>
 
-                <!-- LOGIN FORM -->
+                <!-- LOGIN -->
                 <form x-show="tab=='login'" action="{{ route('login') }}" method="POST" class="space-y-3">
                     @csrf
-
-                    <div class="relative">
-                        <i class="fa fa-envelope absolute left-3 top-3 text-gray-500"></i>
-                        <input name="email" type="email" placeholder="Email"
-                            class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                    </div>
-                    @error('email')
-                        <p class="text-red-400 text-xs">{{ $message }}</p>
-                    @enderror
-
-                    <div class="relative">
-                        <i class="fa fa-lock absolute left-3 top-3 text-gray-500"></i>
-                        <input name="password" type="password" placeholder="Password"
-                            class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                    </div>
-                    @error('password')
-                        <p class="text-red-400 text-xs">{{ $message }}</p>
-                    @enderror
-
-                    <button class="w-full py-2 rounded-lg font-semibold bg-blue-600 hover:bg-blue-500 transition">
+                    <input name="email" type="email" placeholder="Email"
+                        class="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-700">
+                    <input name="password" type="password" placeholder="Password"
+                        class="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-700">
+                    <button class="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition">
                         Login
                     </button>
                 </form>
 
-                <!-- REGISTER FORM -->
+                <!-- REGISTER -->
                 <form x-show="tab=='register'" action="{{ route('register') }}" method="POST" class="space-y-3">
                     @csrf
-
-                    <div class="relative">
-                        <i class="fa fa-user absolute left-3 top-3 text-gray-500"></i>
-                        <input name="name" type="text" placeholder="Full Name"
-                            class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:border-green-500 focus:ring-1 focus:ring-green-500">
-                    </div>
-                    @error('name')
-                        <p class="text-red-400 text-xs">{{ $message }}</p>
-                    @enderror
-
-                    <div class="relative">
-                        <i class="fa fa-envelope absolute left-3 top-3 text-gray-500"></i>
-                        <input name="email" type="email" placeholder="Email"
-                            class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:border-green-500 focus:ring-1 focus:ring-green-500">
-                    </div>
-                    @error('email')
-                        <p class="text-red-400 text-xs">{{ $message }}</p>
-                    @enderror
-
-                    <div class="relative">
-                        <i class="fa fa-lock absolute left-3 top-3 text-gray-500"></i>
-                        <input name="password" type="password" placeholder="Password"
-                            class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:border-green-500 focus:ring-1 focus:ring-green-500">
-                    </div>
-                    @error('password')
-                        <p class="text-red-400 text-xs">{{ $message }}</p>
-                    @enderror
-
-                    <div class="relative">
-                        <i class="fa fa-lock absolute left-3 top-3 text-gray-500"></i>
-                        <input name="password_confirmation" type="password" placeholder="Confirm Password"
-                            class="w-full pl-10 pr-3 py-2 rounded-lg bg-gray-900 border border-gray-700">
-                    </div>
-
-                    <button class="w-full py-2 rounded-lg font-semibold bg-green-600 hover:bg-green-500 transition">
+                    <input name="name" type="text" placeholder="Full Name"
+                        class="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-700">
+                    <input name="email" type="email" placeholder="Email"
+                        class="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-700">
+                    <input name="password" type="password" placeholder="Password"
+                        class="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-700">
+                    <input name="password_confirmation" type="password" placeholder="Confirm Password"
+                        class="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-700">
+                    <button class="w-full py-2 rounded-lg bg-green-600 hover:bg-green-500 transition">
                         Register
                     </button>
                 </form>
 
-                <!-- CLOSE -->
                 <button @click="openLogin=false"
                     class="mt-4 w-full py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition text-sm">
                     Close
                 </button>
-
             </div>
         </div>
+    </nav>
 
+    <!-- ================= CONTENT ================= -->
+    <main class="flex-1">
+        @yield('content')
+    </main>
 
-        <!-- ================= CONTENT ================= -->
-        <main class="min-h-screen">
-            @yield('content')
-        </main>
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-gray-800 border-t border-gray-700">
+        <div class="max-w-6xl mx-auto px-4 py-6">
+            <div
+                class="flex flex-col md:flex-row justify-between items-center gap-3 text-sm text-gray-400">
+                <p>
+                    © {{ date('Y') }} <span class="font-semibold text-white">Cinema</span>.
+                    All rights reserved.
+                </p>
+                <div class="flex gap-4 text-lg">
+                    <i class="fa-brands fa-instagram hover:text-blue-400 cursor-pointer"></i>
+                    <i class="fa-brands fa-github hover:text-blue-400 cursor-pointer"></i>
+                    <i class="fa-brands fa-youtube hover:text-blue-400 cursor-pointer"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
 
 </body>
-
 </html>
