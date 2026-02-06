@@ -125,11 +125,19 @@
                         </div>
                     </div>
 
-                    <!-- BUTTON LAYOUT KURSI -->
-                    <a href="{{ route('user.pemesanan.kursi', $pemesanan->id) }}"
-                        class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-lg text-sm font-semibold shadow">
-                        Layout Kursi
-                    </a>
+                    <div class="flex gap-3">
+                        <!-- PREVIEW STRUK -->
+                        <button onclick="openStrukModal()"
+                            class="bg-gray-700 hover:bg-gray-800 text-white px-5 py-3 rounded-lg text-sm font-semibold shadow">
+                            Lihat Struk
+                        </button>
+
+                        <!-- LAYOUT KURSI -->
+                        <a href="{{ route('user.pemesanan.kursi', $pemesanan->id) }}"
+                            class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-lg text-sm font-semibold shadow">
+                            Layout Kursi
+                        </a>
+                    </div>
 
                 </div>
 
