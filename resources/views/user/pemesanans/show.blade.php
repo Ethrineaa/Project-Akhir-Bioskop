@@ -126,11 +126,11 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <!-- PREVIEW STRUK -->
-                        <button onclick="openStrukModal()"
-                            class="bg-gray-700 hover:bg-gray-800 text-white px-5 py-3 rounded-lg text-sm font-semibold shadow">
-                            Lihat Struk
-                        </button>
+                        <!-- CETAK STRUK -->
+                        <a href="{{ route('user.struk.print', $pemesanan->id) }}" target="_blank"
+                            class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg text-sm font-semibold shadow">
+                            Cetak Struk
+                        </a>
 
                         <!-- LAYOUT KURSI -->
                         <a href="{{ route('user.pemesanan.kursi', $pemesanan->id) }}"

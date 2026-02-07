@@ -19,6 +19,7 @@ use App\Http\Controllers\User\FilmController as UserFilmController;
 use App\Http\Controllers\User\UserDashboardController;
 use App\Http\Controllers\User\PemesananController as PemesananController;
 use App\Http\Controllers\User\PembayaranController as PembayaranController;
+use App\Http\Controllers\User\StrukController;
 
 use App\Http\Controllers\MidtransController;
 
@@ -58,6 +59,7 @@ Route::prefix('user')
         Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi']);
         Route::post('/pemesanan/checkout', [PemesananController::class, 'checkout'])->name('pemesanan.checkout');
         Route::get('/pemesanan/{pemesanan}/kursi', [PemesananController::class, 'layoutKursi'])->name('pemesanan.kursi');
+        Route::get('/struk/{id}/print', [StrukController::class, 'print'])->name('struk.print');
     });
 
 /*
