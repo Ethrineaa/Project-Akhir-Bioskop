@@ -11,7 +11,7 @@
         <!-- All -->
         <a href="{{ route('landing') }}">
             <button class="px-4 py-1 rounded-full
-                    {{ request('genre') ? 'bg-gray-700' : 'bg-purple-600' }}">
+                        {{ request('genre') ? 'bg-gray-700' : 'bg-purple-600' }}">
                 All
             </button>
         </a>
@@ -20,7 +20,7 @@
         @foreach ($genres as $genre)
             <a href="?genre={{ $genre->id }}">
                 <button class="px-4 py-1 rounded-full
-                                {{ request('genre') == $genre->id ? 'bg-purple-600' : 'bg-gray-700' }}">
+                                        {{ request('genre') == $genre->id ? 'bg-purple-600' : 'bg-gray-700' }}">
                     {{ $genre->nama }}
                 </button>
             </a>
@@ -66,80 +66,90 @@
 
     <!-- CHAT POPUP -->
     <!-- CHAT POPUP (Guest & Auth) -->
-    <div id="chat-popup" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 w-full max-w-sm pointer-events-none">
-        
+    <div id="chat-popup"
+        class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 w-full max-w-sm pointer-events-none">
+
         <!-- Chat Box -->
-        <div id="chat-box" class="w-80 bg-white border border-gray-200 rounded-2xl shadow-2xl flex flex-col h-96 overflow-hidden hidden transition-all duration-300 transform origin-bottom-right scale-95 opacity-0 pointer-events-auto">
+        <div id="chat-box"
+            class="w-80 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl flex flex-col h-96 overflow-hidden hidden transition-all duration-300 transform origin-bottom-right scale-95 opacity-0 pointer-events-auto">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-5 py-4 flex justify-between items-center text-white">
+            <div class="bg-gray-800 border-b border-gray-700 px-5 py-4 flex justify-between items-center text-white">
                 <div class="flex items-center gap-3">
                     <div class="relative">
-                        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" class="w-8 h-8 rounded-full bg-white p-1" alt="Admin">
-                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 border-2 border-blue-600 rounded-full"></span>
+                        <div
+                            class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-xs font-bold shadow-sm">
+                            CS
+                        </div>
+                        <span
+                            class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-gray-800 rounded-full"></span>
                     </div>
                     <div>
-                        <h4 class="font-bold text-sm">Customer Support</h4>
-                        <p class="text-xs text-blue-100">Online & Ready to help</p>
+                        <h4 class="font-bold text-sm text-gray-100">Customer Support</h4>
+                        <p class="text-xs text-green-400">Online</p>
                     </div>
                 </div>
-                <button id="chat-close" class="text-white hover:text-gray-200 transition-colors">
+                <button id="chat-close" class="text-gray-400 hover:text-white transition-colors">
                     <i class="fa-solid fa-times text-lg"></i>
                 </button>
             </div>
 
             <!-- Messages Area -->
-            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 scrollbar-thin scrollbar-thumb-gray-300">
+            <div id="chat-messages"
+                class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-900 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
                 @auth
                     @forelse($chats as $chat)
                         @if($chat->sender_type === 'user')
                             <div class="flex justify-end animate-fade-in-up">
-                                <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-tr-sm max-w-[85%] text-sm shadow-sm">
+                                <div class="bg-purple-600 text-white px-4 py-2 rounded-2xl rounded-tr-sm max-w-[85%] text-sm shadow-md">
                                     {{ $chat->message }}
                                 </div>
                             </div>
                         @else
                             <div class="flex justify-start animate-fade-in-up">
-                                <div class="bg-white text-gray-800 px-4 py-2 rounded-2xl rounded-tl-sm max-w-[85%] text-sm shadow-sm border border-gray-100">
+                                <div
+                                    class="bg-gray-800 text-gray-200 px-4 py-2 rounded-2xl rounded-tl-sm max-w-[85%] text-sm shadow-md border border-gray-700">
                                     {{ $chat->message }}
                                 </div>
                             </div>
                         @endif
                     @empty
-                        <div class="flex flex-col items-center justify-center h-full text-gray-400 space-y-2">
-                            <i class="fa-regular fa-comments text-4xl text-gray-300"></i>
+                        <div class="flex flex-col items-center justify-center h-full text-gray-500 space-y-2 opacity-70">
+                            <i class="fa-regular fa-comments text-4xl text-gray-600"></i>
                             <p class="text-xs">Start a conversation!</p>
                         </div>
                     @endforelse
                 @else
                     <div class="flex flex-col items-center justify-center h-full text-center px-6 space-y-4">
-                        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-500 mb-2">
-                            <i class="fa-solid fa-lock text-3xl"></i>
+                        <div
+                            class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center text-purple-500 mb-2 border border-gray-700">
+                            <i class="fa-solid fa-lock text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-gray-800 font-bold text-base">Login Required</p>
-                            <p class="text-gray-500 text-sm mt-1">Please login to access our support chat.</p>
+                            <p class="text-white font-bold text-base">Login Required</p>
+                            <p class="text-gray-400 text-sm mt-1">Please login to access our support chat.</p>
                         </div>
                     </div>
                 @endauth
             </div>
 
             <!-- Footer / Input Area -->
-            <div class="p-3 bg-white border-t border-gray-100">
+            <div class="p-3 bg-gray-800 border-t border-gray-700">
                 @auth
                     <form action="{{ route('user.chat.store') }}" method="POST" class="flex gap-2 items-center" id="chat-form">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-                        <input type="text" name="message" 
-                               class="flex-1 bg-gray-100 border-0 text-gray-800 text-sm rounded-full px-4 py-3 focus:ring-2 focus:ring-blue-500 placeholder-gray-400 transition-all outline-none" 
-                               placeholder="Type your message..." required autocomplete="off">
-                        <button type="submit" 
-                                class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full transition-all shadow-md active:scale-95 flex items-center justify-center w-10 h-10">
+                        <input type="text" name="message"
+                            class="flex-1 bg-gray-900 border border-gray-700 text-white text-sm rounded-full px-4 py-3 focus:ring-1 focus:ring-purple-500 placeholder-gray-500 transition-all outline-none"
+                            placeholder="Type your message..." required autocomplete="off">
+                        <button type="submit"
+                            class="bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-full transition-all shadow-lg active:scale-95 flex items-center justify-center w-10 h-10">
                             <i class="fa-solid fa-paper-plane text-xs"></i>
                         </button>
                     </form>
                 @else
                     <div class="text-center">
-                        <a href="{{ route('login') }}" class="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-3 rounded-full shadow-lg transition-all hover:shadow-xl group">
+                        <a href="{{ route('login') }}"
+                            class="flex items-center justify-center gap-2 w-full bg-gray-700 hover:bg-gray-600 text-white text-sm font-bold py-3 rounded-full shadow-lg transition-all hover:bg-gray-500 group border border-gray-600">
                             <span>Login to Chat</span>
                             <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
                         </a>
@@ -150,7 +160,7 @@
 
         <!-- Toggle Button -->
         <button id="chat-toggle"
-            class="bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 rounded-full shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] flex items-center justify-center transition-all duration-300 transform hover:scale-110 pointer-events-auto">
+            class="bg-purple-600 hover:bg-purple-700 text-white w-14 h-14 rounded-full shadow-[0_4px_14px_0_rgba(147,51,234,0.39)] flex items-center justify-center transition-all duration-300 transform hover:scale-110 pointer-events-auto">
             <i class="fa-regular fa-comment-dots text-2xl"></i>
         </button>
     </div>
