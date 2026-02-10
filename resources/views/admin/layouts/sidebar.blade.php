@@ -86,6 +86,18 @@
                         <span class="hide-menu">Data Pemesanan</span>
                     </a>
                 </li>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Komunikasi</span>
+                </li>
+
+                <li class="sidebar-item {{ Request::routeIs('admin.chat.admin*') ? 'selected' : '' }}">
+                    <a class="sidebar-link {{ Request::routeIs('admin.chat.admin*') ? 'active' : '' }}"
+                        href="{{ route('admin.chat.admin') }}">
+                        <i class="ti ti-message-dots"></i>
+                        <span class="hide-menu">Chat Admin</span>
+                    </a>
+                </li>
             </ul>
         </nav>
 

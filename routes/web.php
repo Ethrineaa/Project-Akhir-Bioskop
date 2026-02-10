@@ -21,7 +21,8 @@ use App\Http\Controllers\User\PemesananController as PemesananController;
 use App\Http\Controllers\User\PembayaranController as PembayaranController;
 use App\Http\Controllers\User\StrukController;
 
-use App\Http\Controllers\MidtransController;
+// Chat Controller
+use App\Http\Controllers\ChatsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,24 +47,25 @@ Route::prefix('user')
     ->group(function () {
         Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 
-        // =============================
         // PILIH KURSI
-        // =============================
         Route::get('kursi/{jadwal}', [PemesananController::class, 'pilihKursi'])->name('kursi.index');
 
-        // =============================
         // PEMESANAN
-        // =============================
         Route::resource('pemesanan', PemesananController::class)->only(['store', 'index', 'show']);
-
         Route::get('/pemesanan/kursi/{jadwal}', [PemesananController::class, 'pilihKursi']);
         Route::post('/pemesanan/checkout', [PemesananController::class, 'checkout'])->name('pemesanan.checkout');
         Route::get('/pemesanan/{pemesanan}/kursi', [PemesananController::class, 'layoutKursi'])->name('pemesanan.kursi');
+
+        // STRUK
         Route::get('/struk/{id}/print', [StrukController::class, 'print'])->name('struk.print');
+
+        // CHAT USER
+        Route::get('/chat', [ChatsController::class, 'userChat'])->name('chat.user');
+        Route::post('/chat/store', [ChatsController::class, 'store'])->name('chat.store');
     });
 
 /*
-|-------------------------------------------------------------------2-------
+|--------------------------------------------------------------------------
 | ADMIN ROUTES
 |--------------------------------------------------------------------------
 */
@@ -71,8 +73,9 @@ Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'role:admin'])
     ->group(function () {
-        // Dashboard (menggunakan controller)
+        // Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
         // CRUD
         Route::resource('genre', GenreController::class);
         Route::resource('film', AdminFilmController::class);
@@ -80,6 +83,11 @@ Route::prefix('admin')
         Route::resource('kursi', KursiController::class);
         Route::resource('jadwal', JadwalController::class);
         Route::resource('pemesanan', AdminPemesananController::class);
+
+        // CHAT ADMIN
+        Route::get('/chat', [ChatsController::class, 'adminChat'])->name('chat.admin');
+        Route::get('/chat/{userId}', [ChatsController::class, 'adminChatDetail'])->name('chat.admin.detail');
+        Route::post('/chat/store', [ChatsController::class, 'store'])->name('chat.store');
     });
 
 /*

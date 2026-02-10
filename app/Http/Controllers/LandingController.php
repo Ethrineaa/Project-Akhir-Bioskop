@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Film;
 use App\Models\Genre;
+use App\Models\Chast;
+use App\Models\Chats;
 use Illuminate\Http\Request;
 
 class LandingController extends Controller
@@ -14,11 +16,14 @@ class LandingController extends Controller
 
         if ($request->genre) {
             $films = Film::where('genre_id', $request->genre)->latest()->get();
-        }
-        else {
+        } else {
             $films = Film::latest()->get();
         }
 
-        return view('welcome', compact('films', 'genres'));
+        $chats = auth()->check()
+            ? Chats::where('user_id', auth()->id())->orderBy('created_at')->get()
+            : collect(); // kosongkan collection agar Blade tetap jalan
+
+        return view('welcome', compact('films', 'genres', 'chats'));
     }
 }

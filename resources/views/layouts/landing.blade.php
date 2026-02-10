@@ -18,8 +18,7 @@
 <body class="bg-gray-900 text-white flex flex-col min-h-screen">
 
     <!-- ====================== NAVBAR ====================== -->
-    <nav class="bg-gray-800 py-4" x-data="{ openLogin: false }"
-        x-init="@if ($errors->any()) openLogin = true @endif">
+    <nav class="bg-gray-800 py-4" x-data="{ openLogin: false }" x-init="@if ($errors->any()) openLogin = true @endif">
         <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
 
             <!-- LOGO -->
@@ -90,8 +89,8 @@
         <div x-show="openLogin" x-transition.opacity
             class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
 
-            <div x-data="{ tab: '{{ $errors->has('name') ? 'register' : 'login' }}' }"
-                @click.away="openLogin = false" x-transition.scale
+            <div x-data="{ tab: '{{ $errors->has('name') ? 'register' : 'login' }}' }" @click.away="openLogin = false"
+                x-transition.scale
                 class="bg-gradient-to-br from-gray-900 to-gray-800 w-[380px] p-6 rounded-2xl shadow-2xl border border-gray-700">
 
                 <div class="text-center mb-5">
@@ -100,8 +99,7 @@
                 </div>
 
                 <div class="flex mb-5 bg-gray-800 rounded-lg p-1">
-                    <button @click="tab='login'"
-                        :class="tab=='login' ? 'bg-blue-600 text-white' : 'text-gray-400'"
+                    <button @click="tab='login'" :class="tab=='login' ? 'bg-blue-600 text-white' : 'text-gray-400'"
                         class="flex-1 py-2 rounded-md text-sm font-semibold transition">
                         Login
                     </button>
@@ -156,8 +154,7 @@
     <!-- ================= FOOTER ================= -->
     <footer class="bg-gray-800 border-t border-gray-700">
         <div class="max-w-6xl mx-auto px-4 py-6">
-            <div
-                class="flex flex-col md:flex-row justify-between items-center gap-3 text-sm text-gray-400">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-3 text-sm text-gray-400">
                 <p>
                     © {{ date('Y') }} <span class="font-semibold text-white">Cinema</span>.
                     All rights reserved.
@@ -171,5 +168,7 @@
         </div>
     </footer>
 
+    @yield('scripts')
 </body>
+
 </html>
