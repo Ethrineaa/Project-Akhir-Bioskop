@@ -138,9 +138,7 @@
                             Layout Kursi
                         </a>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>
